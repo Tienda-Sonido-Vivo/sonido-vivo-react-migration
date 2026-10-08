@@ -1,3 +1,5 @@
+// src/componentes/organismos/CarruselPrincipal.tsx
+
 function CarruselPrincipal() {
 
     return (

@@ -1,9 +1,13 @@
+// src/App.tsx
+
 import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./componentes/organismos/Navbar";
 import Footer from "./componentes/organismos/Footer";
 
 import Inicio from "./paginas/Inicio";
+import DetalleProducto from "./paginas/DetalleProducto";
+
 
 function App() {
 
@@ -18,6 +22,12 @@ function App() {
                 <Route
                     path="/"
                     element={<Inicio />}
+                />
+
+
+                <Route
+                    path="/producto/:codigo"
+                    element={<DetalleProducto />}
                 />
 
 

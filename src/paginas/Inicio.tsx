@@ -1,3 +1,5 @@
+//src/paginas/Inicio.tsx
+
 import CarruselPrincipal from "../componentes/organismos/CarruselPrincipal";
 import TituloSeccion from "../componentes/atomos/TituloSeccion";
 import CardProducto from "../componentes/moleculas/CardProducto";

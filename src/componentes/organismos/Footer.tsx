@@ -1,3 +1,6 @@
+// src/componentes/organismos/Footer.tsx
+
+
 function Footer() {
 
     return (

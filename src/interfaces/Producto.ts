@@ -1,3 +1,5 @@
+// src/interfaces/Producto.ts
+
 export interface Producto {
     codigo: string;
     nombre: string;

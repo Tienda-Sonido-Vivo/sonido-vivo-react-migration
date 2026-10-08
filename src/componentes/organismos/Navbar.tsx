@@ -1,3 +1,6 @@
+// src/componentes/organismos/Navbar.tsx
+
+
 import { Link } from "react-router-dom";
 import Logo from "../atomos/Logo";
 import Buscador from "../moleculas/Buscador";

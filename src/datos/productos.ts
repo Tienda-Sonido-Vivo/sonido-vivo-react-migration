@@ -1,3 +1,5 @@
+// src/datos/productos.ts
+
 import type { Producto } from "../interfaces/Producto";
 
 export const productos: Producto[] = [
