@@ -9,6 +9,8 @@ import Inicio from "./paginas/Inicio";
 import DetalleProducto from "./paginas/DetalleProducto";
 import Catalogo from "./paginas/Catalogo";
 
+import Login from "./paginas/Login";
+
 function App() {
 
     return (
@@ -34,6 +36,10 @@ function App() {
                     element={<DetalleProducto />}
                 />
 
+                <Route
+                    path="/login"
+                    element={<Login />}
+                />
 
             </Routes>
 
