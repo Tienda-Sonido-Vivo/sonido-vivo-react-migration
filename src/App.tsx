@@ -7,7 +7,7 @@ import Footer from "./componentes/organismos/Footer";
 
 import Inicio from "./paginas/Inicio";
 import DetalleProducto from "./paginas/DetalleProducto";
-
+import Catalogo from "./paginas/Catalogo";
 
 function App() {
 
@@ -24,6 +24,10 @@ function App() {
                     element={<Inicio />}
                 />
 
+                <Route
+                    path="/catalogo"
+                    element={<Catalogo />}
+                />
 
                 <Route
                     path="/producto/:codigo"
