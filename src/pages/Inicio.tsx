@@ -1,9 +1,9 @@
 //src/paginas/Inicio.tsx
 
-import CarruselPrincipal from "../componentes/organismos/CarruselPrincipal";
-import TituloSeccion from "../componentes/atomos/TituloSeccion";
-import CardProducto from "../componentes/moleculas/CardProducto";
-import { productos } from "../datos/productos";
+import CarruselPrincipal from "../components/organisms/CarruselPrincipal";
+import TituloSeccion from "../components/atoms/TituloSeccion";
+import CardProducto from "../components/molecules/CardProducto";
+import { productos } from "../data/productos";
 
 function Inicio() {
 

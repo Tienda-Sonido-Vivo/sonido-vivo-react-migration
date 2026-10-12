@@ -1,9 +1,9 @@
 import { useSearchParams } from "react-router-dom";
 
-import { productos } from "../datos/productos";
+import { productos } from "../data/productos";
 
-import CardProducto from "../componentes/moleculas/CardProducto";
-import TituloSeccion from "../componentes/atomos/TituloSeccion";
+import CardProducto from "../components/molecules/CardProducto";
+import TituloSeccion from "../components/atoms/TituloSeccion";
 
 
 function Catalogo() {

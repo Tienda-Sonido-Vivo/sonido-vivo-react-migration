@@ -1,5 +1,5 @@
 import type { Producto } from "../../interfaces/Producto";
-import SelectorCantidad from "../moleculas/SelectorCantidad";
+import SelectorCantidad from "../molecules/SelectorCantidad";
 
 interface InformacionProductoProps {
     producto: Producto;

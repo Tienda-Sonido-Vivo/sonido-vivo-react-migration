@@ -1,0 +1,94 @@
+/* src/estilos/admin.css */
+
+/* Todas las clases empiezan con "admin-" para no chocar con el sitio público */
+
+.admin-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #f4f5f7;
+}
+
+.admin-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar {
+  background-color: #1c1f26;
+}
+
+.admin-sidebar {
+  background-color: #1c1f26;
+  flex-shrink: 0;
+  flex-direction: column;
+}
+
+.admin-contenido {
+  min-width: 0; /* permite que las tablas hagan scroll dentro de .table-responsive */
+}
+
+@media (min-width: 768px) {
+  .admin-layout {
+    flex-direction: row;
+  }
+
+  .admin-sidebar {
+    width: 260px;
+    display: flex !important;
+  }
+}
+
+.admin-acento {
+  color: #d4a017;
+}
+
+.admin-nav-link {
+  color: #c7c9cf !important;
+  border-radius: 6px;
+  padding: 8px 12px;
+  transition: background-color 0.15s ease;
+}
+
+.admin-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: white !important;
+}
+
+.admin-nav-link.active {
+  background-color: #d4a017;
+  color: #1c1f26 !important;
+  font-weight: bold;
+}
+
+.admin-nav-link.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.admin-badge {
+  background-color: #d4a017;
+  color: #1c1f26;
+}
+
+.admin-card {
+  border: none;
+  border-top: 4px solid #d4a017;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-3px);
+}
+
+.admin-card-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.admin-col-ajustada {
+  width: 1%;
+  white-space: nowrap;
+}

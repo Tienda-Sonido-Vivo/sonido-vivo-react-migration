@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import { productos } from "../datos/productos";
+import { productos } from "../data/productos";
 
-import InformacionProducto from "../componentes/organismos/InformacionProducto";
-import AcordeonProducto from "../componentes/organismos/AcordeonProducto";
+import InformacionProducto from "../components/organisms/InformacionProducto";
+import AcordeonProducto from "../components/organisms/AcordeonProducto";
 
 function DetalleProducto() {
 
