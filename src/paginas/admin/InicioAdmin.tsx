@@ -2,7 +2,7 @@
 
 import { Link } from "react-router-dom";
 
-import { enlacesAdmin } from "../../data/menuAdmin";
+import { enlacesAdmin } from "../../datos/menuAdmin";
 import { obtenerRol } from "../../services/sesion";
 
 function InicioAdmin() {

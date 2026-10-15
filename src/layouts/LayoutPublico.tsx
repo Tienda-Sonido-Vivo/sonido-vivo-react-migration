@@ -2,8 +2,8 @@
 
 import { Outlet } from "react-router-dom";
 
-import Navbar from "../components/organisms/Navbar";
-import Footer from "../components/organisms/Footer";
+import Navbar from "../componentes/organismos/Navbar";
+import Footer from "../componentes/organismos/Footer";
 
 
 function LayoutPublico() {

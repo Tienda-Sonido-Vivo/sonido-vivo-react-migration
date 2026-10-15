@@ -2,7 +2,7 @@
 
 import { Outlet } from "react-router-dom";
 
-import SidebarAdmin from "../components/organisms/SidebarAdmin";
+import SidebarAdmin from "../componentes/organismos/SidebarAdmin";
 
 import "../styles/admin.css";
 

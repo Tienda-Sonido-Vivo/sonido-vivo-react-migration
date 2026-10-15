@@ -4,8 +4,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import Logo from "../atoms/Logo";
-import Buscador from "../molecules/Buscador";
+import Logo from "../atomos/Logo";
+import Buscador from "../moleculas/Buscador";
 
 
 function obtenerSesion() {

@@ -6,15 +6,15 @@ import LayoutPublico from "./layouts/LayoutPublico";
 import LayoutAdmin from "./layouts/LayoutAdmin";
 import RutaProtegida from "./routes/RutaProtegida";
 
-import Inicio from "./pages/Inicio";
-import DetalleProducto from "./pages/DetalleProducto";
-import Catalogo from "./pages/Catalogo";
-import Login from "./pages/Login";
+import Inicio from "./paginas/Inicio";
+import DetalleProducto from "./paginas/DetalleProducto";
+import Catalogo from "./paginas/Catalogo";
+import Login from "./paginas/Login";
 
-import InicioAdmin from "./pages/admin/InicioAdmin";
-import GestionUsuarios from "./pages/admin/GestionUsarios";
-import GestionProductos from "./pages/admin/GestionProductos";
-import GestionPedidos from "./pages/admin/GestionPedidos";
+import InicioAdmin from "./paginas/admin/InicioAdmin";
+import GestionUsuarios from "./paginas/admin/GestionUsarios";
+import GestionProductos from "./paginas/admin/GestionProductos";
+import GestionPedidos from "./paginas/admin/GestionPedidos";
 
 function App() {
   return (

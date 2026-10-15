@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { usuarios } from "../data/usuarios";
+import { usuarios } from "../datos/usuarios";
 
 
 function Login() {

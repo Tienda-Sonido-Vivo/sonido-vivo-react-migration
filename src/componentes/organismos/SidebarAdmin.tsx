@@ -2,7 +2,7 @@
 
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
-import { enlacesAdmin } from "../../data/menuAdmin";
+import { enlacesAdmin } from "../../datos/menuAdmin";
 import { cerrarSesion, obtenerRol } from "../../services/sesion";
 
 function SidebarAdmin() {
