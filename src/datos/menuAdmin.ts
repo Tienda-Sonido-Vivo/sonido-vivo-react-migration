@@ -1,4 +1,4 @@
-// src/data/menuAdmin.ts
+// src/datos/menuAdmin.ts
 
 import type { Rol } from "../services/sesion";
 
@@ -15,7 +15,7 @@ export interface EnlaceAdmin {
 }
 
 
-// Cambia "disponible" a true cuando termines cada página
+// "disponible: false" muestra el enlace deshabilitado ("Próximamente")
 export const enlacesAdmin: EnlaceAdmin[] = [
 
     {
@@ -24,7 +24,7 @@ export const enlacesAdmin: EnlaceAdmin[] = [
         titulo: "Gestión de Usuarios",
         descripcion: "Crea, edita y desactiva usuarios y asigna roles.",
         roles: ["Administrador"],
-        disponible: false
+        disponible: true
     },
 
     {
@@ -33,7 +33,7 @@ export const enlacesAdmin: EnlaceAdmin[] = [
         titulo: "Gestión de Productos",
         descripcion: "Administra el catálogo y controla el stock.",
         roles: ["Administrador", "Vendedor"],
-        disponible: false
+        disponible: true
     },
 
     {
@@ -42,7 +42,7 @@ export const enlacesAdmin: EnlaceAdmin[] = [
         titulo: "Gestión de Pedidos",
         descripcion: "Consulta pedidos y actualiza su estado.",
         roles: ["Administrador", "Vendedor"],
-        disponible: false
+        disponible: true
     }
 
 ];
