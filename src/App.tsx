@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./componentes/organismos/Navbar";
@@ -10,6 +8,11 @@ import DetalleProducto from "./paginas/DetalleProducto";
 import Catalogo from "./paginas/Catalogo";
 
 import Login from "./paginas/Login";
+
+import Nosotros from "./paginas/Nosotros";
+import Contacto from "./paginas/Contacto";
+import Novedades from "./paginas/Novedades";
+import NovedadDetalle from "./paginas/NovedadDetalle";
 
 function App() {
 
@@ -39,6 +42,26 @@ function App() {
                 <Route
                     path="/login"
                     element={<Login />}
+                />
+
+                <Route
+                    path="/nosotros"
+                    element={<Nosotros />}
+                />
+
+                <Route
+                    path="/contacto"
+                    element={<Contacto />}
+                />
+
+                <Route
+                    path="/novedades"
+                    element={<Novedades />}
+                />
+
+                <Route
+                    path="/novedades/:slug"
+                    element={<NovedadDetalle />}
                 />
 
             </Routes>
