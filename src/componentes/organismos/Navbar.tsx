@@ -66,8 +66,26 @@ function Navbar() {
 
     const cerrarSesion = () => {
 
+        sessionStorage.removeItem(
+            "usuarioLogueado"
+        );
+
+        sessionStorage.removeItem(
+            "rolUsuario"
+        );
+
+        sessionStorage.removeItem(
+            "correoUsuario"
+        );
+
+        /*
         sessionStorage.removeItem("usuarioLogueado");
         sessionStorage.removeItem("rolUsuario");
+        */
+
+        window.dispatchEvent(
+            new Event("sesionCambiada")
+        );
 
 
         setSesionIniciada(false);

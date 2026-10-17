@@ -1,6 +1,656 @@
 // src/App.tsx
 
+import { useState } from "react";
+import {Routes,Route} from "react-router-dom";
+
+import Navbar from "./componentes/organismos/Navbar";
+
+import Footer from "./componentes/organismos/Footer";
+
+import Inicio
+    from "./paginas/Inicio";
+
+import Catalogo
+    from "./paginas/Catalogo";
+
+import DetalleProducto
+    from "./paginas/DetalleProducto";
+
+import Login
+    from "./paginas/Login";
+
+import Registro
+    from "./paginas/Registro";
+
+import Carrito
+    from "./paginas/Carrito";
+
+import Checkout
+    from "./paginas/Checkout";
+
+import ConfirmacionPedido
+    from "./paginas/ConfirmacionPedido";
+
+import MisPedidos
+    from "./paginas/MisPedidos";
+
+import DetallePedido
+    from "./paginas/DetallePedido";
+
+import { productos } from "./datos/productos";
+
+import {
+    usuarios as usuariosIniciales
+} from "./datos/usuarios";
+
+import type { ItemCarrito } from "./interfaces/ItemCarrito";
+
+import type { Pedido } from "./interfaces/Pedido";
+
+import type { Usuario } from "./interfaces/Usuario";
+
+import type {
+    DatosFormularioCheckout
+} from "./componentes/organismos/FormularioCheckout";
+
+
+function App() {
+
+    /*
+     * USUARIOS:
+     * viven en el estado React.
+     *
+     * NO localStorage.
+     */
+    const [usuarios, setUsuarios] =
+        useState<Usuario[]>(
+            usuariosIniciales
+        );
+
+
+    /*
+     * CARRITO:
+     * vive en React.
+     */
+    const [carrito, setCarrito] =
+        useState<ItemCarrito[]>([]);
+
+
+    /*
+     * PEDIDOS:
+     * viven en React.
+     */
+    const [pedidos, setPedidos] =
+        useState<Pedido[]>([]);
+
+
+    /*
+     * Solo recuperamos de sessionStorage
+     * quién tiene la sesión actual.
+     */
+    const [correoUsuario, setCorreoUsuario] =
+        useState(
+            sessionStorage.getItem(
+                "correoUsuario"
+            ) ?? ""
+        );
+
+
+    /*
+     * LOGIN
+     */
+    const iniciarSesion = (
+        usuario: Usuario
+    ) => {
+
+        setCorreoUsuario(
+            usuario.email
+        );
+
+    };
+
+
+    /*
+     * REGISTRO
+     */
+    const registrarUsuario = (
+        nuevoUsuario: Usuario
+    ) => {
+
+        setUsuarios(
+            (anteriores) => [
+                ...anteriores,
+                nuevoUsuario
+            ]
+        );
+
+    };
+
+
+    /*
+     * AGREGAR AL CARRITO
+     */
+    const agregarAlCarrito = (
+        codigo: string,
+        cantidad: number
+    ) => {
+
+        const producto =
+            productos.find(
+                (actual) =>
+                    actual.codigo === codigo
+            );
+
+        if (!producto) {
+            return;
+        }
+
+
+        if (
+            cantidad < 1 ||
+            cantidad > producto.stock
+        ) {
+
+            alert(
+                "La cantidad seleccionada no está disponible."
+            );
+
+            return;
+        }
+
+
+        setCarrito(
+            (actual) => {
+
+                const itemExistente =
+                    actual.find(
+                        (item) =>
+                            item.codigo ===
+                            codigo
+                    );
+
+
+                if (!itemExistente) {
+
+                    return [
+                        ...actual,
+                        {
+                            codigo,
+                            cantidad
+                        }
+                    ];
+                }
+
+
+                const nuevaCantidad =
+                    itemExistente.cantidad +
+                    cantidad;
+
+
+                if (
+                    nuevaCantidad >
+                    producto.stock
+                ) {
+
+                    alert(
+                        `Solo hay ${producto.stock} unidades disponibles.`
+                    );
+
+                    return actual;
+                }
+
+
+                return actual.map(
+                    (item) =>
+                        item.codigo ===
+                        codigo
+
+                            ? {
+                                ...item,
+                                cantidad:
+                                    nuevaCantidad
+                            }
+
+                            : item
+                );
+
+            }
+        );
+    };
+
+
+    /*
+     * CAMBIAR CANTIDAD
+     */
+    const cambiarCantidad = (
+        codigo: string,
+        cantidad: number
+    ) => {
+
+        const producto =
+            productos.find(
+                (actual) =>
+                    actual.codigo === codigo
+            );
+
+        if (!producto) {
+            return;
+        }
+
+
+        const cantidadValida =
+            Math.min(
+                Math.max(
+                    1,
+                    cantidad
+                ),
+                producto.stock
+            );
+
+
+        setCarrito(
+            (actual) =>
+                actual.map(
+                    (item) =>
+                        item.codigo ===
+                        codigo
+
+                            ? {
+                                ...item,
+                                cantidad:
+                                    cantidadValida
+                            }
+
+                            : item
+                )
+        );
+
+    };
+
+
+    /*
+     * ELIMINAR DEL CARRITO
+     */
+    const eliminarDelCarrito = (
+        codigo: string
+    ) => {
+
+        setCarrito(
+            (actual) =>
+                actual.filter(
+                    (item) =>
+                        item.codigo !==
+                        codigo
+                )
+        );
+
+    };
+
+
+    /*
+     * CREAR PEDIDO
+     */
+    const confirmarPedido = (
+        datos: DatosFormularioCheckout
+    ) => {
+
+        if (
+            !correoUsuario ||
+            carrito.length === 0
+        ) {
+
+            return;
+        }
+
+
+        /*
+         * Verificación final de stock.
+         */
+        for (
+            const item of carrito
+        ) {
+
+            const producto =
+                productos.find(
+                    (actual) =>
+                        actual.codigo ===
+                        item.codigo
+                );
+
+
+            if (
+                !producto ||
+                item.cantidad >
+                    producto.stock
+            ) {
+
+                alert(
+                    `No hay suficiente stock para ${
+                        producto?.nombre ??
+                        item.codigo
+                    }.`
+                );
+
+                return;
+            }
+        }
+
+
+        /*
+         * Convertimos ItemCarrito
+         * en ProductoPedido.
+         */
+        const productosPedido =
+            carrito.flatMap(
+                (item) => {
+
+                    const producto =
+                        productos.find(
+                            (actual) =>
+                                actual.codigo ===
+                                item.codigo
+                        );
+
+
+                    if (!producto) {
+                        return [];
+                    }
+
+
+                    return [
+
+                        {
+                            codigo:
+                                producto.codigo,
+
+                            nombre:
+                                producto.nombre,
+
+                            precio:
+                                producto.precio,
+
+                            cantidad:
+                                item.cantidad
+                        }
+
+                    ];
+                }
+            );
+
+
+        const subtotal =
+            productosPedido.reduce(
+                (
+                    acumulado,
+                    item
+                ) =>
+                    acumulado +
+                    item.precio *
+                    item.cantidad,
+                0
+            );
+
+
+        const envio =
+            datos.metodoEntrega ===
+            "despacho"
+                ? 8990
+                : 0;
+
+
+        const iva =
+            Math.round(
+                subtotal *
+                19 /
+                119
+            );
+
+
+        const siguienteNumero =
+            pedidos.length + 1;
+
+
+        const codigoPedido =
+            `PED-${String(
+                siguienteNumero
+            ).padStart(6, "0")}`;
+
+
+        const fechaActual =
+            new Date();
+
+
+        const pedido: Pedido = {
+
+            codigo:
+                codigoPedido,
+
+            fecha:
+                fechaActual.toLocaleDateString(
+                    "es-CL"
+                ),
+
+            fechaISO:
+                fechaActual.toISOString(),
+
+            estado:
+                "Confirmado",
+
+            productos:
+                productosPedido,
+
+            subtotal,
+
+            envio,
+
+            iva,
+
+            total:
+                subtotal + envio,
+
+            metodoEntrega:
+                datos.metodoEntrega,
+
+            metodoPago:
+                datos.metodoPago,
+
+            cliente: {
+
+                nombre:
+                    datos.nombre.trim(),
+
+                apellidos:
+                    datos.apellidos.trim(),
+
+                telefono:
+                    datos.telefono.trim(),
+
+                correo:
+                    datos.correo.trim(),
+
+                region:
+                    datos.region,
+
+                comuna:
+                    datos.comuna,
+
+                direccion:
+                    datos.direccion.trim(),
+
+                numeroVivienda:
+                    datos.numeroVivienda.trim(),
+
+                codigoPostal:
+                    datos.codigoPostal.trim()
+
+            },
+
+            correoCliente:
+                correoUsuario
+        };
+
+
+        /*
+         * Guardamos el pedido en React.
+         */
+        setPedidos(
+            (actuales) => [
+                ...actuales,
+                pedido
+            ]
+        );
+
+
+        /*
+         * El carrito queda vacío
+         * después de una compra exitosa.
+         */
+        setCarrito([]);
+
+    };
+
+
+    return (
+
+        <div className="app">
+
+            <Navbar />
+
+            <Routes>
+
+                <Route
+                    path="/"
+                    element={<Inicio />}
+                />
+
+
+                <Route
+                    path="/catalogo"
+                    element={<Catalogo />}
+                />
+
+
+                <Route
+                    path="/producto/:codigo"
+                    element={
+                        <DetalleProducto
+                            onAgregarCarrito={
+                                agregarAlCarrito
+                            }
+                        />
+                    }
+                />
+
+
+                <Route
+                    path="/login"
+                    element={
+                        <Login
+                            usuarios={usuarios}
+                            onIniciarSesion={
+                                iniciarSesion
+                            }
+                        />
+                    }
+                />
+
+
+                <Route
+                    path="/registro"
+                    element={
+                        <Registro
+                            usuarios={usuarios}
+                            onRegistrarUsuario={
+                                registrarUsuario
+                            }
+                        />
+                    }
+                />
+
+
+                <Route
+                    path="/carrito"
+                    element={
+                        <Carrito
+                            carrito={carrito}
+                            productos={productos}
+                            onCambiarCantidad={
+                                cambiarCantidad
+                            }
+                            onEliminar={
+                                eliminarDelCarrito
+                            }
+                        />
+                    }
+                />
+
+
+                <Route
+                    path="/checkout"
+                    element={
+                        <Checkout
+                            carrito={carrito}
+                            productos={productos}
+                            correoUsuario={
+                                correoUsuario
+                            }
+                            onConfirmarPedido={
+                                confirmarPedido
+                            }
+                        />
+                    }
+                />
+
+
+                <Route
+                    path="/confirmacion-pedido/:codigo"
+                    element={
+                        <ConfirmacionPedido
+                            pedidos={pedidos}
+                        />
+                    }
+                />
+
+
+                <Route
+                    path="/mis-pedidos"
+                    element={
+                        <MisPedidos
+                            pedidos={pedidos}
+                            correoUsuario={
+                                correoUsuario
+                            }
+                        />
+                    }
+                />
+
+
+                <Route
+                    path="/mis-pedidos/:codigo"
+                    element={
+                        <DetallePedido
+                            pedidos={pedidos}
+                            correoUsuario={
+                                correoUsuario
+                            }
+                        />
+                    }
+                />
+
+            </Routes>
+
+            <Footer />
+
+        </div>
+    );
+}
+
+export default App;
+
+/*
 import { Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+
 
 import Navbar from "./componentes/organismos/Navbar";
 import Footer from "./componentes/organismos/Footer";
@@ -10,6 +660,11 @@ import DetalleProducto from "./paginas/DetalleProducto";
 import Catalogo from "./paginas/Catalogo";
 
 import Login from "./paginas/Login";
+
+
+import Carrito from "./paginas/Carrito";
+import Checkout from "./paginas/Checkout";
+
 
 function App() {
 
@@ -52,3 +707,5 @@ function App() {
 }
 
 export default App;
+
+*/

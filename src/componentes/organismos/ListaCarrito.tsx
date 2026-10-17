@@ -1,4 +1,4 @@
-
+// src/componentes/organismos/ListaCarrito.tsx
 import type { Producto } from "../../interfaces/Producto";
 import type { ItemCarrito } from "../../interfaces/ItemCarrito";
 import ItemCarritoComponente from "../moleculas/ItemCarrito";
