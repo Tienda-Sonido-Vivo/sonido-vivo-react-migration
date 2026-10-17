@@ -1,12 +1,9 @@
 // src/paginas/DetalleProducto.tsx
 
 import { useState } from "react";
-import {
-    Link,
-    useParams
-} from "react-router-dom";
+import { Link,useNavigate,useParams} from "react-router-dom";
 
-import { productos } from "../datos/productos";
+import type { Producto } from "../interfaces/Producto";
 
 import InformacionProducto
     from "../componentes/organismos/InformacionProducto";
@@ -16,6 +13,8 @@ import AcordeonProducto
 
 interface DetalleProductoProps {
 
+    productos: Producto[];
+
     onAgregarCarrito: (
         codigo: string,
         cantidad: number
@@ -23,10 +22,13 @@ interface DetalleProductoProps {
 }
 
 function DetalleProducto({
+    productos,
     onAgregarCarrito
 }: DetalleProductoProps) {
 
     const { codigo } = useParams();
+
+    const navigate = useNavigate();
 
     const producto = productos.find(
         (productoActual) =>
@@ -96,6 +98,11 @@ function DetalleProducto({
             cantidad
         );
 
+        alert(
+            `"${producto.nombre}" fue agregado al carrito.`
+        );
+
+        navigate("/carrito");
     };
 
     return (

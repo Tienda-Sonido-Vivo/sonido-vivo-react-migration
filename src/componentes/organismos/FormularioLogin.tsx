@@ -21,7 +21,6 @@ function FormularioLogin({
 
     const [correo, setCorreo] = useState("");
     const [clave, setClave] = useState("");
-    const [mensaje, setMensaje] = useState("");
 
     const manejarEnvio = (
         event: FormEvent<HTMLFormElement>
@@ -29,14 +28,14 @@ function FormularioLogin({
 
         event.preventDefault();
 
-        setMensaje("");
-
         const correoLimpio = correo.trim().toLowerCase();
 
         if (!correoLimpio || !clave.trim()) {
-            setMensaje(
+
+            alert(
                 "Debe completar todos los campos."
             );
+
             return;
         }
 
@@ -44,16 +43,20 @@ function FormularioLogin({
             /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!formatoCorreo.test(correoLimpio)) {
-            setMensaje(
+
+            alert(
                 "Ingrese un correo válido."
             );
+
             return;
         }
 
         if (clave.length < 4 || clave.length > 10) {
-            setMensaje(
+
+            alert(
                 "La clave debe tener entre 4 y 10 caracteres."
             );
+
             return;
         }
 
@@ -66,16 +69,14 @@ function FormularioLogin({
         );
 
         if (!usuario) {
-            setMensaje(
+
+            alert(
                 "Correo o clave incorrectos, o usuario inactivo."
             );
+
             return;
         }
 
-        /*
-         * sessionStorage se utiliza solamente
-         * para mantener la sesión actual.
-         */
         sessionStorage.setItem(
             "usuarioLogueado",
             "true"
@@ -91,14 +92,8 @@ function FormularioLogin({
             usuario.email
         );
 
-        /*
-         * Actualiza el estado de App.tsx.
-         */
         onIniciarSesion(usuario);
 
-        /*
-         * Actualiza Navbar.
-         */
         window.dispatchEvent(
             new Event("sesionCambiada")
         );
@@ -108,16 +103,11 @@ function FormularioLogin({
             usuario.rol === "Vendedor"
         ) {
 
-            /*
-             * Esta ruta queda para el trabajo
-             * del compañero encargado del administrador.
-             */
             navigate("/admin");
 
         } else {
 
             navigate("/");
-
         }
     };
 
@@ -143,17 +133,6 @@ function FormularioLogin({
                 valor={clave}
                 alCambiar={setClave}
             />
-
-            {mensaje && (
-
-                <div
-                    className="alert alert-danger"
-                    role="alert"
-                >
-                    {mensaje}
-                </div>
-
-            )}
 
             <div className="d-grid gap-2 mt-4">
 

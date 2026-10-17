@@ -25,7 +25,8 @@ interface CheckoutProps {
 
     onConfirmarPedido: (
         datos: DatosFormularioCheckout
-    ) => void;
+    ) => string | null;
+    
 }
 
 function Checkout({
@@ -111,6 +112,20 @@ function Checkout({
         0
     );
 
+    const manejarConfirmacion = (
+        datos: DatosFormularioCheckout
+    ) => {
+
+        const codigoPedido =
+            onConfirmarPedido(datos);
+
+        if (codigoPedido) {
+            navigate(
+                `/confirmacion-pedido/${codigoPedido}`
+            );
+        }
+    };
+
     return (
 
         <main className="container my-5">
@@ -170,7 +185,7 @@ function Checkout({
                     <FormularioCheckout
                         correoUsuario={correoUsuario}
                         onConfirmarPedido={
-                            onConfirmarPedido
+                            manejarConfirmacion
                         }
                     />
 

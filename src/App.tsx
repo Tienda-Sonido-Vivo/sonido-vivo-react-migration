@@ -1,11 +1,20 @@
 // src/App.tsx
 
-import { useState } from "react";
-import {Routes,Route} from "react-router-dom";
+import {
+    useEffect,
+    useState
+} from "react";
 
-import Navbar from "./componentes/organismos/Navbar";
+import {
+    Routes,
+    Route
+} from "react-router-dom";
 
-import Footer from "./componentes/organismos/Footer";
+import Navbar
+    from "./componentes/organismos/Navbar";
+
+import Footer
+    from "./componentes/organismos/Footer";
 
 import Inicio
     from "./paginas/Inicio";
@@ -43,11 +52,21 @@ import {
     usuarios as usuariosIniciales
 } from "./datos/usuarios";
 
-import type { ItemCarrito } from "./interfaces/ItemCarrito";
+import type {
+    ItemCarrito
+} from "./interfaces/ItemCarrito";
 
-import type { Pedido } from "./interfaces/Pedido";
+import type {
+    Producto
+} from "./interfaces/Producto";
 
-import type { Usuario } from "./interfaces/Usuario";
+import type {
+    Pedido
+} from "./interfaces/Pedido";
+
+import type {
+    Usuario
+} from "./interfaces/Usuario";
 
 import type {
     DatosFormularioCheckout
@@ -85,15 +104,63 @@ function App() {
 
 
     /*
+     * PRODUCTOS:
+     * este estado permite actualizar
+     * el stock después de una compra.
+     */
+    const [
+        productosDisponibles,
+        setProductosDisponibles
+    ] = useState<Producto[]>(
+        productos
+    );
+
+
+    /*
      * Solo recuperamos de sessionStorage
      * quién tiene la sesión actual.
      */
-    const [correoUsuario, setCorreoUsuario] =
-        useState(
-            sessionStorage.getItem(
-                "correoUsuario"
-            ) ?? ""
+    const [
+        correoUsuario,
+        setCorreoUsuario
+    ] = useState(
+        sessionStorage.getItem(
+            "correoUsuario"
+        ) ?? ""
+    );
+
+
+    /*
+     * Actualizamos la sesión cuando
+     * Login o Navbar informa un cambio.
+     */
+    useEffect(() => {
+
+        const actualizarSesion = () => {
+
+            setCorreoUsuario(
+                sessionStorage.getItem(
+                    "correoUsuario"
+                ) ?? ""
+            );
+
+        };
+
+        window.addEventListener(
+            "sesionCambiada",
+            actualizarSesion
         );
+
+        return () => {
+
+            window.removeEventListener(
+                "sesionCambiada",
+                actualizarSesion
+            );
+
+        };
+
+    }, []);
 
 
     /*
@@ -136,10 +203,11 @@ function App() {
     ) => {
 
         const producto =
-            productos.find(
+            productosDisponibles.find(
                 (actual) =>
                     actual.codigo === codigo
             );
+
 
         if (!producto) {
             return;
@@ -228,10 +296,11 @@ function App() {
     ) => {
 
         const producto =
-            productos.find(
+            productosDisponibles.find(
                 (actual) =>
                     actual.codigo === codigo
             );
+
 
         if (!producto) {
             return;
@@ -289,17 +358,27 @@ function App() {
 
     /*
      * CREAR PEDIDO
+     *
+     * IMPORTANTE:
+     * devuelve el código del pedido
+     * si la compra fue exitosa.
+     *
+     * Devuelve null si no se pudo
+     * realizar la compra.
      */
     const confirmarPedido = (
         datos: DatosFormularioCheckout
-    ) => {
+    ): string | null => {
 
+        /*
+         * Verificamos sesión y carrito.
+         */
         if (
             !correoUsuario ||
             carrito.length === 0
         ) {
 
-            return;
+            return null;
         }
 
 
@@ -311,7 +390,7 @@ function App() {
         ) {
 
             const producto =
-                productos.find(
+                productosDisponibles.find(
                     (actual) =>
                         actual.codigo ===
                         item.codigo
@@ -331,8 +410,9 @@ function App() {
                     }.`
                 );
 
-                return;
+                return null;
             }
+
         }
 
 
@@ -345,7 +425,7 @@ function App() {
                 (item) => {
 
                     const producto =
-                        productos.find(
+                        productosDisponibles.find(
                             (actual) =>
                                 actual.codigo ===
                                 item.codigo
@@ -374,10 +454,14 @@ function App() {
                         }
 
                     ];
+
                 }
             );
 
 
+        /*
+         * Calculamos subtotal.
+         */
         const subtotal =
             productosPedido.reduce(
                 (
@@ -391,6 +475,9 @@ function App() {
             );
 
 
+        /*
+         * Calculamos envío.
+         */
         const envio =
             datos.metodoEntrega ===
             "despacho"
@@ -398,6 +485,9 @@ function App() {
                 : 0;
 
 
+        /*
+         * IVA.
+         */
         const iva =
             Math.round(
                 subtotal *
@@ -406,6 +496,9 @@ function App() {
             );
 
 
+        /*
+         * Generamos código del pedido.
+         */
         const siguienteNumero =
             pedidos.length + 1;
 
@@ -416,10 +509,16 @@ function App() {
             ).padStart(6, "0")}`;
 
 
+        /*
+         * Fecha actual.
+         */
         const fechaActual =
             new Date();
 
 
+        /*
+         * Creamos el pedido.
+         */
         const pedido: Pedido = {
 
             codigo:
@@ -487,6 +586,7 @@ function App() {
 
             correoCliente:
                 correoUsuario
+
         };
 
 
@@ -502,10 +602,58 @@ function App() {
 
 
         /*
+         * ACTUALIZAR STOCK
+         *
+         * Restamos del stock la cantidad
+         * que fue comprada.
+         */
+        setProductosDisponibles(
+            (actuales) =>
+                actuales.map(
+                    (producto) => {
+
+                        const itemComprado =
+                            carrito.find(
+                                (item) =>
+                                    item.codigo ===
+                                    producto.codigo
+                            );
+
+
+                        if (!itemComprado) {
+                            return producto;
+                        }
+
+
+                        return {
+
+                            ...producto,
+
+                            stock:
+                                producto.stock -
+                                itemComprado.cantidad
+
+                        };
+
+                    }
+                )
+        );
+
+
+        /*
          * El carrito queda vacío
          * después de una compra exitosa.
          */
         setCarrito([]);
+
+
+        /*
+         * IMPORTANTE:
+         * devolvemos el código del pedido
+         * para que Checkout pueda navegar
+         * a la confirmación.
+         */
+        return codigoPedido;
 
     };
 
@@ -520,13 +668,17 @@ function App() {
 
                 <Route
                     path="/"
-                    element={<Inicio />}
+                    element={
+                        <Inicio />
+                    }
                 />
 
 
                 <Route
                     path="/catalogo"
-                    element={<Catalogo />}
+                    element={
+                        <Catalogo />
+                    }
                 />
 
 
@@ -534,6 +686,9 @@ function App() {
                     path="/producto/:codigo"
                     element={
                         <DetalleProducto
+                            productos={
+                                productosDisponibles
+                            }
                             onAgregarCarrito={
                                 agregarAlCarrito
                             }
@@ -546,7 +701,9 @@ function App() {
                     path="/login"
                     element={
                         <Login
-                            usuarios={usuarios}
+                            usuarios={
+                                usuarios
+                            }
                             onIniciarSesion={
                                 iniciarSesion
                             }
@@ -559,7 +716,9 @@ function App() {
                     path="/registro"
                     element={
                         <Registro
-                            usuarios={usuarios}
+                            usuarios={
+                                usuarios
+                            }
                             onRegistrarUsuario={
                                 registrarUsuario
                             }
@@ -572,8 +731,12 @@ function App() {
                     path="/carrito"
                     element={
                         <Carrito
-                            carrito={carrito}
-                            productos={productos}
+                            carrito={
+                                carrito
+                            }
+                            productos={
+                                productosDisponibles
+                            }
                             onCambiarCantidad={
                                 cambiarCantidad
                             }
@@ -589,8 +752,12 @@ function App() {
                     path="/checkout"
                     element={
                         <Checkout
-                            carrito={carrito}
-                            productos={productos}
+                            carrito={
+                                carrito
+                            }
+                            productos={
+                                productosDisponibles
+                            }
                             correoUsuario={
                                 correoUsuario
                             }
@@ -606,7 +773,9 @@ function App() {
                     path="/confirmacion-pedido/:codigo"
                     element={
                         <ConfirmacionPedido
-                            pedidos={pedidos}
+                            pedidos={
+                                pedidos
+                            }
                         />
                     }
                 />
@@ -616,7 +785,9 @@ function App() {
                     path="/mis-pedidos"
                     element={
                         <MisPedidos
-                            pedidos={pedidos}
+                            pedidos={
+                                pedidos
+                            }
                             correoUsuario={
                                 correoUsuario
                             }
@@ -629,7 +800,9 @@ function App() {
                     path="/mis-pedidos/:codigo"
                     element={
                         <DetallePedido
-                            pedidos={pedidos}
+                            pedidos={
+                                pedidos
+                            }
                             correoUsuario={
                                 correoUsuario
                             }
@@ -642,70 +815,9 @@ function App() {
             <Footer />
 
         </div>
+
     );
 }
 
-export default App;
-
-/*
-import { Routes, Route } from "react-router-dom";
-import { useEffect, useState } from "react";
-
-
-import Navbar from "./componentes/organismos/Navbar";
-import Footer from "./componentes/organismos/Footer";
-
-import Inicio from "./paginas/Inicio";
-import DetalleProducto from "./paginas/DetalleProducto";
-import Catalogo from "./paginas/Catalogo";
-
-import Login from "./paginas/Login";
-
-
-import Carrito from "./paginas/Carrito";
-import Checkout from "./paginas/Checkout";
-
-
-function App() {
-
-    return (
-
-        <div className="app">
-
-            <Navbar />
-
-            <Routes>
-
-                <Route
-                    path="/"
-                    element={<Inicio />}
-                />
-
-                <Route
-                    path="/catalogo"
-                    element={<Catalogo />}
-                />
-
-                <Route
-                    path="/producto/:codigo"
-                    element={<DetalleProducto />}
-                />
-
-                <Route
-                    path="/login"
-                    element={<Login />}
-                />
-
-            </Routes>
-
-            <Footer />
-
-        </div>
-
-    );
-
-}
 
 export default App;
-
-*/

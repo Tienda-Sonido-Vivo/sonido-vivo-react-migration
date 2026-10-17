@@ -88,12 +88,6 @@ function FormularioCheckout({
     const [metodoPago, setMetodoPago] =
         useState<MetodoPago>("debito");
 
-    /*
-     * Estos estados pertenecen exclusivamente
-     * al formulario de pago.
-     *
-     * NO se guardan en Pedido.
-     */
     const [numeroTarjeta, setNumeroTarjeta] =
         useState("");
 
@@ -112,12 +106,58 @@ function FormularioCheckout({
     const [numeroDocumento, setNumeroDocumento] =
         useState("");
 
-    const [mensaje, setMensaje] =
-        useState("");
-
     const comunasDisponibles = region
         ? regionesComunas[region] ?? []
         : [];
+
+    const validarRutChileno = (rut: string): boolean => {
+
+    const rutLimpio = rut
+        .replace(/\./g, "")
+        .replace(/-/g, "")
+        .replace(/\s/g, "")
+        .toUpperCase();
+
+        if (!/^\d+[0-9K]$/.test(rutLimpio)) {
+            return false;
+        }
+
+        const cuerpo = rutLimpio.slice(0, -1);
+        const digitoVerificador = rutLimpio.slice(-1);
+
+        let suma = 0;
+        let multiplicador = 2;
+
+        for (
+            let i = cuerpo.length - 1;
+            i >= 0;
+            i--
+        ) {
+            suma +=
+                Number(cuerpo[i]) *
+                multiplicador;
+
+            multiplicador =
+                multiplicador === 7
+                    ? 2
+                    : multiplicador + 1;
+        }
+
+        const resto = suma % 11;
+        const resultado = 11 - resto;
+
+        const digitoCalculado =
+            resultado === 11
+                ? "0"
+                : resultado === 10
+                    ? "K"
+                    : String(resultado);
+
+        return (
+            digitoCalculado ===
+            digitoVerificador
+        );
+    };
 
     const validarFormulario = (): string => {
 
@@ -198,11 +238,11 @@ function FormularioCheckout({
             }
 
             if (
+                codigoPostal.trim() &&
                 !/^\d{7}$/.test(
                     codigoPostal.trim()
                 )
             ) {
-
                 return (
                     "El código postal debe contener 7 números."
                 );
@@ -259,13 +299,8 @@ function FormularioCheckout({
                 );
             }
 
-            if (
-                rutPago.trim().length < 8
-            ) {
-
-                return (
-                    "Ingresa un RUT válido."
-                );
+            if (!validarRutChileno(rutPago)) {
+                return "Ingresa un RUT válido.";
             }
 
             if (
@@ -291,12 +326,10 @@ function FormularioCheckout({
 
         if (error) {
 
-            setMensaje(error);
+            alert(error);
 
             return;
         }
-
-        setMensaje("");
 
         onConfirmarPedido({
 
@@ -323,7 +356,6 @@ function FormularioCheckout({
             metodoEntrega,
 
             metodoPago
-
         });
     };
 
@@ -362,7 +394,6 @@ function FormularioCheckout({
         } else {
 
             setFechaVencimiento(digitos);
-
         }
     };
 
@@ -398,11 +429,9 @@ function FormularioCheckout({
                             value="Chile"
                             disabled
                         >
-
                             <option value="Chile">
                                 Chile
                             </option>
-
                         </select>
 
                     </div>
@@ -889,18 +918,6 @@ function FormularioCheckout({
                 </div>
 
             </div>
-
-
-            {mensaje && (
-
-                <div
-                    className="alert alert-danger"
-                    role="alert"
-                >
-                    {mensaje}
-                </div>
-
-            )}
 
 
             <button

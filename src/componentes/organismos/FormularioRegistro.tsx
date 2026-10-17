@@ -5,9 +5,7 @@ import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CampoFormulario from "../moleculas/CampoFormulario";
-
 import { regionesComunas } from "../../datos/regionesComunas";
-
 import type { Usuario } from "../../interfaces/Usuario";
 
 interface FormularioRegistroProps {
@@ -35,8 +33,6 @@ function FormularioRegistro({
     const [confirmarClave, setConfirmarClave] =
         useState("");
 
-    const [mensaje, setMensaje] = useState("");
-
     const comunasDisponibles = region
         ? regionesComunas[region] ?? []
         : [];
@@ -46,8 +42,6 @@ function FormularioRegistro({
     ) => {
 
         event.preventDefault();
-
-        setMensaje("");
 
         const runLimpio = run.trim();
         const emailLimpio = email.trim().toLowerCase();
@@ -64,7 +58,7 @@ function FormularioRegistro({
             !confirmarClave
         ) {
 
-            setMensaje(
+            alert(
                 "Debe completar todos los campos obligatorios."
             );
 
@@ -76,7 +70,7 @@ function FormularioRegistro({
 
         if (!formatoCorreo.test(emailLimpio)) {
 
-            setMensaje(
+            alert(
                 "Ingrese un correo electrónico válido."
             );
 
@@ -91,7 +85,7 @@ function FormularioRegistro({
 
         if (correoExiste) {
 
-            setMensaje(
+            alert(
                 "Ya existe un usuario registrado con ese correo."
             );
 
@@ -106,7 +100,7 @@ function FormularioRegistro({
 
         if (runExiste) {
 
-            setMensaje(
+            alert(
                 "Ya existe un usuario registrado con ese RUN."
             );
 
@@ -118,7 +112,7 @@ function FormularioRegistro({
             apellidos.trim().length < 2
         ) {
 
-            setMensaje(
+            alert(
                 "El nombre y los apellidos deben tener al menos 2 caracteres."
             );
 
@@ -127,7 +121,7 @@ function FormularioRegistro({
 
         if (clave.length < 4 || clave.length > 10) {
 
-            setMensaje(
+            alert(
                 "La clave debe tener entre 4 y 10 caracteres."
             );
 
@@ -136,7 +130,7 @@ function FormularioRegistro({
 
         if (clave !== confirmarClave) {
 
-            setMensaje(
+            alert(
                 "Las claves no coinciden."
             );
 
@@ -169,10 +163,13 @@ function FormularioRegistro({
             auditoria: [],
 
             clave
-
         };
 
         onRegistrarUsuario(nuevoUsuario);
+
+        alert(
+            "Cuenta creada correctamente. Ahora puedes iniciar sesión."
+        );
 
         navigate("/login");
     };
@@ -352,17 +349,6 @@ function FormularioRegistro({
                 valor={confirmarClave}
                 alCambiar={setConfirmarClave}
             />
-
-            {mensaje && (
-
-                <div
-                    className="alert alert-danger"
-                    role="alert"
-                >
-                    {mensaje}
-                </div>
-
-            )}
 
             <div className="d-grid mt-4">
 
