@@ -6,7 +6,7 @@ import type { Producto } from "../../interfaces/Producto";
 import { categorias } from "../../datos/categorias";
 
 import ModalBase from "../moleculas/ModalBase";
-import CampoFormulario from "../moleculas/CampoFormulario";
+import CampoConError from "../moleculas/CampoConError";
 
 
 interface FormularioProducto {
@@ -255,7 +255,7 @@ function ModalProducto({
 
                 <div className="col-12 col-md-4">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="productoCodigo"
                         etiqueta="Código"
                         error={errores.codigo}
@@ -272,14 +272,14 @@ function ModalProducto({
                             onChange={(e) => cambiar("codigo", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-8">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="productoCategoria"
                         etiqueta="Categoría"
                         error={errores.categoria}
@@ -305,14 +305,14 @@ function ModalProducto({
 
                         </select>
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
             </div>
 
 
-            <CampoFormulario
+            <CampoConError
                 id="productoNombre"
                 etiqueta="Nombre del producto"
                 error={errores.nombre}
@@ -328,14 +328,14 @@ function ModalProducto({
                     onChange={(e) => cambiar("nombre", e.target.value)}
                 />
 
-            </CampoFormulario>
+            </CampoConError>
 
 
             <div className="row">
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="productoMarca"
                         etiqueta="Marca"
                         error={errores.marca}
@@ -351,14 +351,14 @@ function ModalProducto({
                             onChange={(e) => cambiar("marca", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="productoModelo"
                         etiqueta="Modelo"
                         error={errores.modelo}
@@ -374,7 +374,7 @@ function ModalProducto({
                             onChange={(e) => cambiar("modelo", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
@@ -385,7 +385,7 @@ function ModalProducto({
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="productoStock"
                         etiqueta="Stock"
                         error={errores.stock}
@@ -401,14 +401,14 @@ function ModalProducto({
                             onChange={(e) => cambiar("stock", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="productoPrecio"
                         etiqueta="Precio (CLP)"
                         error={errores.precio}
@@ -425,14 +425,14 @@ function ModalProducto({
                             onChange={(e) => cambiar("precio", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
             </div>
 
 
-            <CampoFormulario
+            <CampoConError
                 id="productoImagen"
                 etiqueta="Ruta de la imagen"
                 ayuda="Ej: /img/tarjetas/Guitarra Acustica Yamaha F310.webp"
@@ -447,7 +447,7 @@ function ModalProducto({
                     onChange={(e) => cambiar("imagen", e.target.value)}
                 />
 
-            </CampoFormulario>
+            </CampoConError>
 
 
             {formulario.imagen.trim() !== "" && (
@@ -464,7 +464,7 @@ function ModalProducto({
             )}
 
 
-            <CampoFormulario
+            <CampoConError
                 id="productoDescripcion"
                 etiqueta="Descripción breve"
                 error={errores.descripcion}
@@ -480,7 +480,7 @@ function ModalProducto({
                     onChange={(e) => cambiar("descripcion", e.target.value)}
                 />
 
-            </CampoFormulario>
+            </CampoConError>
 
         </ModalBase>
 

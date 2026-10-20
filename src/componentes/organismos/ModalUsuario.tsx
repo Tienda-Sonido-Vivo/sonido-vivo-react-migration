@@ -4,15 +4,15 @@ import { useState } from "react";
 
 import type { Usuario } from "../../interfaces/Usuario";
 import { regionesComunas } from "../../datos/regionesComunas";
-import { fechaHoy } from "../../utilities/formato";
+import { fechaHoy } from "../../utilidades/formato";
 import {
     formatearRun,
     normalizarRun,
     validarRun
-} from "../../utilities/run";
+} from "../../utilidades/run";
 
 import ModalBase from "../moleculas/ModalBase";
-import CampoFormulario from "../moleculas/CampoFormulario";
+import CampoConError from "../moleculas/CampoConError";
 
 
 interface FormularioUsuario {
@@ -40,6 +40,9 @@ interface ModalUsuarioProps {
     usuario: Usuario | null;
 
     usuarios: Usuario[];
+
+    // true = es la cuenta con la sesión iniciada (no puede quitarse su propio acceso)
+    esCuentaPropia: boolean;
 
     onGuardar: (usuario: Usuario, esNuevo: boolean) => void;
 
@@ -88,6 +91,7 @@ function formularioInicial(usuario: Usuario | null): FormularioUsuario {
 function ModalUsuario({
     usuario,
     usuarios,
+    esCuentaPropia,
     onGuardar,
     onCerrar
 }: ModalUsuarioProps) {
@@ -138,7 +142,7 @@ function ModalUsuario({
                 nuevos.run =
                     "RUN inválido. Sin puntos y con guion (ej: 12345678-5).";
 
-            } else if (usuarios.some((u) => u.run === runNormalizado)) {
+            } else if (usuarios.some((u) => normalizarRun(u.run) === runNormalizado)) {
 
                 nuevos.run = "Ya existe un usuario con ese RUN.";
 
@@ -330,7 +334,7 @@ function ModalUsuario({
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="usuarioRun"
                         etiqueta="RUN"
                         error={errores.run}
@@ -351,14 +355,14 @@ function ModalUsuario({
                             onChange={(e) => cambiar("run", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="usuarioFecha"
                         etiqueta="Fecha de nacimiento"
                         error={errores.fechaNacimiento}
@@ -372,7 +376,7 @@ function ModalUsuario({
                             onChange={(e) => cambiar("fechaNacimiento", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
@@ -383,7 +387,7 @@ function ModalUsuario({
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="usuarioNombre"
                         etiqueta="Nombre"
                         error={errores.nombre}
@@ -398,14 +402,14 @@ function ModalUsuario({
                             onChange={(e) => cambiar("nombre", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="usuarioApellidos"
                         etiqueta="Apellidos"
                         error={errores.apellidos}
@@ -420,14 +424,14 @@ function ModalUsuario({
                             onChange={(e) => cambiar("apellidos", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
             </div>
 
 
-            <CampoFormulario
+            <CampoConError
                 id="usuarioEmail"
                 etiqueta="Correo electrónico"
                 error={errores.email}
@@ -442,14 +446,14 @@ function ModalUsuario({
                     onChange={(e) => cambiar("email", e.target.value)}
                 />
 
-            </CampoFormulario>
+            </CampoConError>
 
 
             <div className="row">
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="usuarioRegion"
                         etiqueta="Región"
                         error={errores.region}
@@ -474,14 +478,14 @@ function ModalUsuario({
 
                         </select>
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-6">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="usuarioComuna"
                         etiqueta="Comuna"
                         error={errores.comuna}
@@ -511,14 +515,14 @@ function ModalUsuario({
 
                         </select>
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
             </div>
 
 
-            <CampoFormulario
+            <CampoConError
                 id="usuarioDireccion"
                 etiqueta="Dirección"
                 error={errores.direccion}
@@ -533,19 +537,24 @@ function ModalUsuario({
                     onChange={(e) => cambiar("direccion", e.target.value)}
                 />
 
-            </CampoFormulario>
+            </CampoConError>
 
 
             <div className="row">
 
                 <div className="col-12 col-md-4">
 
-                    <CampoFormulario id="usuarioRol" etiqueta="Rol">
+                    <CampoConError
+                        id="usuarioRol"
+                        etiqueta="Rol"
+                        ayuda={esCuentaPropia ? "No puedes cambiar tu propio rol." : undefined}
+                    >
 
                         <select
                             id="usuarioRol"
                             className="form-select"
                             value={formulario.rol}
+                            disabled={esCuentaPropia}
                             onChange={(e) =>
                                 cambiar("rol", e.target.value as Usuario["rol"])
                             }
@@ -555,19 +564,24 @@ function ModalUsuario({
                             <option value="Cliente">Cliente</option>
                         </select>
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-4">
 
-                    <CampoFormulario id="usuarioEstado" etiqueta="Estado">
+                    <CampoConError
+                        id="usuarioEstado"
+                        etiqueta="Estado"
+                        ayuda={esCuentaPropia ? "No puedes desactivar tu propia cuenta." : undefined}
+                    >
 
                         <select
                             id="usuarioEstado"
                             className="form-select"
                             value={formulario.estado}
+                            disabled={esCuentaPropia}
                             onChange={(e) =>
                                 cambiar("estado", e.target.value as Usuario["estado"])
                             }
@@ -576,14 +590,14 @@ function ModalUsuario({
                             <option value="Inactivo">Inactivo</option>
                         </select>
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 
 
                 <div className="col-12 col-md-4">
 
-                    <CampoFormulario
+                    <CampoConError
                         id="usuarioClave"
                         etiqueta={esNuevo ? "Clave" : "Nueva clave"}
                         error={errores.clave}
@@ -604,7 +618,7 @@ function ModalUsuario({
                             onChange={(e) => cambiar("clave", e.target.value)}
                         />
 
-                    </CampoFormulario>
+                    </CampoConError>
 
                 </div>
 

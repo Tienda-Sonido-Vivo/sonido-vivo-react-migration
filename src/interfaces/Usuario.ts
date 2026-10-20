@@ -1,27 +1,29 @@
 // src/interfaces/Usuario.ts
 
 export interface Usuario {
-  run: string;
 
-  nombre: string;
+    run: string;
 
-  apellidos: string;
+    nombre: string;
 
-  email: string;
+    apellidos: string;
 
-  fechaNacimiento?: string;
+    email: string;
 
-  region: string;
+    fechaNacimiento?: string;
 
-  comuna: string;
+    region: string;
 
-  direccion: string;
+    comuna: string;
 
-  rol: "Administrador" | "Vendedor" | "Cliente";
+    direccion: string;
 
-  estado: "Activo" | "Inactivo";
+    rol: "Administrador" | "Vendedor" | "Cliente";
 
-  auditoria?: string[];
+    estado: "Activo" | "Inactivo";
 
-  clave: string;
+    auditoria?: string[];
+
+    clave: string;
+
 }

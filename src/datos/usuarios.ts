@@ -6,7 +6,7 @@ import type { Usuario } from "../interfaces/Usuario";
 export const usuarios: Usuario[] = [
 
     {
-        run: "123456785",
+        run: "123456789",
         nombre: "Juan",
         apellidos: "Pérez Gómez",
         email: "admin@demo.cl",
@@ -25,7 +25,7 @@ export const usuarios: Usuario[] = [
     },
 
     {
-        run: "987654325",
+        run: "987654321",
         nombre: "María",
         apellidos: "González Soto",
         email: "vendedor1@demo.cl",
@@ -43,7 +43,7 @@ export const usuarios: Usuario[] = [
     },
 
     {
-        run: "11223344K",
+        run: "112233445",
         nombre: "Pedro",
         apellidos: "Ramírez López",
         email: "vendedor2@demo.cl",
@@ -60,7 +60,7 @@ export const usuarios: Usuario[] = [
     },
 
     {
-        run: "556677883",
+        run: "556677889",
         nombre: "Ana",
         apellidos: "Martínez Díaz",
         email: "usuario@demo.cl",

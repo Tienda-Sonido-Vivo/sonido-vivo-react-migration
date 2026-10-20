@@ -1,6 +1,6 @@
 // src/datos/menuAdmin.ts
 
-import type { Rol } from "../services/sesion";
+import type { Rol } from "../servicios/sesion";
 
 
 export interface EnlaceAdmin {

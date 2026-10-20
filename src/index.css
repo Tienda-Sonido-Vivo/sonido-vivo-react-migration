@@ -112,3 +112,137 @@ footer {
     }
 
 }
+
+/* Estilos del flujo de compra y formularios: mantienen la identidad de Sonido Vivo. */
+.boton-sonido-vivo {
+    background-color: #005f7f;
+    border-color: #005f7f;
+}
+
+.boton-sonido-vivo:hover,
+.boton-sonido-vivo:focus-visible {
+    background-color: #00465e;
+    border-color: #00465e;
+}
+
+.flujo-compra .breadcrumb a {
+    color: #005f7f;
+    text-decoration: none;
+}
+
+.flujo-compra .breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.flujo-compra .card,
+.confirmacion-card,
+.checkout-acceso {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.opcion-entrega {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.25rem;
+    width: 100%;
+    min-height: 72px;
+    padding: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.opcion-entrega.seleccionada {
+    border-color: #005f7f;
+    box-shadow: 0 0 0 2px rgb(0 95 127 / 12%);
+    background-color: #f2f9fb;
+}
+
+.opcion-entrega .form-check-input {
+    flex-shrink: 0;
+    margin-top: 0.2rem;
+}
+
+.checkout-resumen {
+    position: static;
+}
+
+.imagen-item-carrito {
+    width: 100%;
+    max-height: 120px;
+    object-fit: contain;
+    background-color: #f8f9fa;
+}
+
+.confirmacion-card {
+    max-width: 920px;
+}
+
+.confirmacion-encabezado {
+    background: #f0f8fa;
+    border-bottom: 1px solid #d7e8ed;
+}
+
+.confirmacion-icono {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    color: #fff;
+    background-color: #198754;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.dato-pedido {
+    height: 100%;
+    padding: 0.9rem;
+    border: 1px solid #e2e7eb;
+    border-radius: 8px;
+    overflow-wrap: anywhere;
+}
+
+.resumen-confirmacion {
+    background-color: #f6f8fa;
+}
+
+.checkout-acceso {
+    max-width: 650px;
+}
+
+@media (min-width: 992px) {
+    .checkout-resumen {
+        position: sticky;
+        top: 1rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .opcion-entrega {
+        min-height: 64px;
+        padding: 0.8rem;
+    }
+
+    .flujo-compra .card-body {
+        overflow-wrap: anywhere;
+    }
+
+    .imagen-item-carrito {
+        max-height: 100px;
+    }
+}
+
+
+/* El azul de marca se aplica a los botones principales de Bootstrap. */
+.btn-primary {
+    --bs-btn-bg: #005f7f;
+    --bs-btn-border-color: #005f7f;
+    --bs-btn-hover-bg: #00465e;
+    --bs-btn-hover-border-color: #00465e;
+    --bs-btn-active-bg: #00384b;
+    --bs-btn-active-border-color: #00384b;
+    --bs-btn-focus-shadow-rgb: 0, 95, 127;
+}

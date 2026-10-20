@@ -68,10 +68,13 @@ function Navbar() {
 
         sessionStorage.removeItem("usuarioLogueado");
         sessionStorage.removeItem("rolUsuario");
-
+        sessionStorage.removeItem("correoUsuario");
 
         setSesionIniciada(false);
 
+        window.dispatchEvent(
+            new Event("sesionCambiada")
+        );
 
         navigate("/");
 

@@ -3,7 +3,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { enlacesAdmin } from "../../datos/menuAdmin";
-import { cerrarSesion, obtenerRol } from "../../services/sesion";
+import { cerrarSesion, obtenerRol } from "../../servicios/sesion";
 
 
 function SidebarAdmin() {
@@ -17,7 +17,7 @@ function SidebarAdmin() {
 
         cerrarSesion();
 
-        navigate("/login");
+        navigate("/");
 
     };
 

@@ -2,17 +2,16 @@
 
 import { useState } from "react";
 
-import type { EstadoPedido, Pedido } from "../../interfaces/Pedido";
-import { formatearMoneda } from "../../utilities/formato";
+import type { Pedido } from "../../interfaces/Pedido";
+import type { EstadoPedido } from "../../interfaces/EstadoPedido";
+import {
+    ESTADOS_PEDIDO,
+    esEstadoPedido,
+    estadosPermitidos
+} from "../../utilidades/estadosPedido";
+import { formatearMoneda } from "../../utilidades/formato";
 
 import ModalBase from "../moleculas/ModalBase";
-
-
-const ORDEN_ESTADOS: EstadoPedido[] = [
-    "En preparación",
-    "Despachado",
-    "Entregado"
-];
 
 
 interface ModalPedidoProps {
@@ -28,13 +27,13 @@ interface ModalPedidoProps {
 
 function ModalPedido({ pedido, onGuardar, onCerrar }: ModalPedidoProps) {
 
-    const [estado, setEstado] = useState<EstadoPedido>(pedido.estado);
+    const [estado, setEstado] = useState<EstadoPedido>(
+        esEstadoPedido(pedido.estado) ? pedido.estado : ESTADOS_PEDIDO[0]
+    );
 
 
-    // Un pedido solo puede avanzar: preparación -> despachado -> entregado
-    const indiceActual = ORDEN_ESTADOS.indexOf(pedido.estado);
-
-    const estadosPermitidos = ORDEN_ESTADOS.slice(indiceActual);
+    // Un pedido solo puede avanzar: confirmado -> preparación -> despachado -> entregado
+    const opciones = estadosPermitidos(pedido.estado);
 
     const estaEntregado = pedido.estado === "Entregado";
 
@@ -99,7 +98,7 @@ function ModalPedido({ pedido, onGuardar, onCerrar }: ModalPedidoProps) {
                 onChange={(e) => setEstado(e.target.value as EstadoPedido)}
             >
 
-                {estadosPermitidos.map((opcion) => (
+                {opciones.map((opcion) => (
 
                     <option key={opcion} value={opcion}>
                         {opcion}

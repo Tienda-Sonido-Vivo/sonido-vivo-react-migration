@@ -2,29 +2,17 @@
 
 import { Fragment, useCallback, useMemo, useState } from "react";
 
-import type { EstadoPedido, Pedido } from "../../interfaces/Pedido";
-import { obtenerPedidos, guardarPedidos } from "../../services/pedidosServicio";
-import { obtenerProductos } from "../../services/productosServicio";
+import type { Pedido } from "../../interfaces/Pedido";
+import type { EstadoPedido } from "../../interfaces/EstadoPedido";
+import { ESTADOS_PEDIDO, claseEstado } from "../../utilidades/estadosPedido";
 import { useOrdenamiento } from "../../hooks/useOrdenamiento";
-import { formatearMoneda } from "../../utilities/formato";
+import { formatearMoneda } from "../../utilidades/formato";
 
 import ThOrdenable from "../../componentes/moleculas/ThOrdenable";
 import ModalPedido from "../../componentes/organismos/ModalPedido";
 
 
 const TOTAL_COLUMNAS = 6;
-
-const ESTADOS: EstadoPedido[] = [
-    "En preparación",
-    "Despachado",
-    "Entregado"
-];
-
-const CLASE_ESTADO: Record<EstadoPedido, string> = {
-    "En preparación": "text-bg-warning",
-    "Despachado": "text-bg-info",
-    "Entregado": "text-bg-success"
-};
 
 const TEXTO_ENTREGA: Record<Pedido["metodoEntrega"], string> = {
     despacho: "Despacho a domicilio",
@@ -39,14 +27,17 @@ const TEXTO_PAGO: Record<Pedido["metodoPago"], string> = {
 };
 
 
-function GestionPedidos() {
+// Los pedidos viven en el estado de App.tsx (los crea el checkout)
+interface GestionPedidosProps {
 
-    const [pedidos, setPedidos] = useState<Pedido[]>(
-        () => obtenerPedidos()
-    );
+    pedidos: Pedido[];
 
-    // Solo se usa para mostrar el nombre de cada producto del pedido
-    const [productos] = useState(() => obtenerProductos());
+    onCambiarPedidos: (pedidos: Pedido[]) => void;
+
+}
+
+
+function GestionPedidos({ pedidos, onCambiarPedidos }: GestionPedidosProps) {
 
     const [pedidoEnModal, setPedidoEnModal] = useState<Pedido | null>(null);
 
@@ -86,9 +77,7 @@ function GestionPedidos() {
                 : p
         );
 
-        setPedidos(nuevos);
-
-        guardarPedidos(nuevos);
+        onCambiarPedidos(nuevos);
 
         setMensaje(
             `El pedido ${pedidoEnModal.codigo} ahora está "${nuevoEstado}".`
@@ -104,10 +93,6 @@ function GestionPedidos() {
         setDetalleAbierto((actual) => (actual === codigo ? null : codigo));
 
     };
-
-
-    const nombreProducto = (codigo: string) =>
-        productos.find((p) => p.codigo === codigo)?.nombre ?? codigo;
 
 
     const encabezado = (etiqueta: string, campo: keyof Pedido) => (
@@ -168,7 +153,7 @@ function GestionPedidos() {
 
                         <option value="">Todos los estados</option>
 
-                        {ESTADOS.map((estado) => (
+                        {ESTADOS_PEDIDO.map((estado) => (
 
                             <option key={estado} value={estado}>
                                 {estado}
@@ -242,7 +227,7 @@ function GestionPedidos() {
                                     </td>
 
                                     <td>
-                                        <span className={"badge " + CLASE_ESTADO[pedido.estado]}>
+                                        <span className={"badge " + claseEstado(pedido.estado)}>
                                             {pedido.estado}
                                         </span>
                                     </td>
@@ -292,7 +277,9 @@ function GestionPedidos() {
                                                         {pedido.productos.map((item) => (
 
                                                             <li key={item.codigo}>
-                                                                {nombreProducto(item.codigo)} × {item.cantidad}
+                                                                {item.nombre} × {item.cantidad}
+                                                                {" — "}
+                                                                {formatearMoneda(item.precio * item.cantidad)}
                                                             </li>
 
                                                         ))}

@@ -5,10 +5,9 @@ import { useCallback, useMemo, useState } from "react";
 import type { Producto } from "../../interfaces/Producto";
 import { categorias } from "../../datos/categorias";
 import { UMBRAL_STOCK_BAJO } from "../../datos/configuracion";
-import { obtenerProductos, guardarProductos } from "../../services/productosServicio";
-import { obtenerRol } from "../../services/sesion";
+import { obtenerRol } from "../../servicios/sesion";
 import { useOrdenamiento } from "../../hooks/useOrdenamiento";
-import { formatearMoneda } from "../../utilities/formato";
+import { formatearMoneda } from "../../utilidades/formato";
 
 import ThOrdenable from "../../componentes/moleculas/ThOrdenable";
 import ModalProducto from "../../componentes/organismos/ModalProducto";
@@ -25,14 +24,20 @@ interface EstadoModal {
 }
 
 
-function GestionProductos() {
+// Los productos viven en el estado de App.tsx (el checkout descuenta el stock ahí)
+interface GestionProductosProps {
+
+    productos: Producto[];
+
+    onCambiarProductos: (productos: Producto[]) => void;
+
+}
+
+
+function GestionProductos({ productos, onCambiarProductos }: GestionProductosProps) {
 
     // El Administrador gestiona todo el catálogo; el Vendedor solo el stock
     const esAdministrador = obtenerRol() === "Administrador";
-
-    const [productos, setProductos] = useState<Producto[]>(
-        () => obtenerProductos()
-    );
 
     const [modal, setModal] = useState<EstadoModal | null>(null);
 
@@ -80,9 +85,7 @@ function GestionProductos() {
 
     const actualizarProductos = (nuevos: Producto[]) => {
 
-        setProductos(nuevos);
-
-        guardarProductos(nuevos);
+        onCambiarProductos(nuevos);
 
     };
 
