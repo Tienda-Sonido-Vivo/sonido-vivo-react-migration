@@ -10,7 +10,7 @@ export function SeccionContacto({ conBorde = false }: Props) {
       <div className="col-12 col-md-6 mb-4" id="contactos">
         <h3 className="fw-bold mb-3">Contáctanos</h3>
         <p className="mb-3 text-muted">
-          Ubicación: Viña del Mar Libertad 1055, Región de Valparaíso | WhatsApp: +56 9 1234 5678 | Correo: info@tiendavivo.com
+          Ubicación: Libertad 1055 Viña del Mar Libertad 1055, Región de Valparaíso | WhatsApp: +56 9 1234 5678 | Correo: info@tiendavivo.com | info@tiendavivo.cl
         </p>
         <CampoFormulario />
       </div>
