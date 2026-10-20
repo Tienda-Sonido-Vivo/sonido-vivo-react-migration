@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 
-function FormularioContacto() {
+function CampoFormulario() {
 
     const [nombre, setNombre] = useState("");
     const [correo, setCorreo] = useState("");
@@ -90,7 +90,7 @@ function FormularioContacto() {
 
                 <label
                     htmlFor="nombreContacto"
-                    className="form-label fw-bold"
+                    className="form-label"
                 >
                     Nombre *
                 </label>
@@ -114,7 +114,7 @@ function FormularioContacto() {
 
                 <label
                     htmlFor="correoContacto"
-                    className="form-label fw-bold"
+                    className="form-label"
                 >
                     Correo electrónico *
                 </label>
@@ -138,7 +138,7 @@ function FormularioContacto() {
 
                 <label
                     htmlFor="mensajeContacto"
-                    className="form-label fw-bold"
+                    className="form-label"
                 >
                     Comentario o mensaje *
                 </label>
@@ -199,4 +199,4 @@ function FormularioContacto() {
 }
 
 
-export default FormularioContacto;
+export default CampoFormulario;
