@@ -1,4 +1,4 @@
-import FormularioContacto from '../componentes/organismos/FormularioContacto'
+import CampoFormulario from '../componentes/moleculas/CampoFormulario'
 
 interface Props {
   conBorde?: boolean
@@ -10,15 +10,22 @@ export function SeccionContacto({ conBorde = false }: Props) {
       <div className="col-12 col-md-6 mb-4" id="contactos">
         <h3 className="fw-bold mb-3">Contáctanos</h3>
         <p className="mb-3 text-muted">
-          Ubicación: Viña del Mar, Región de Valparaíso | WhatsApp: +56 9 5555 5555
+          Ubicación: Viña del Mar Libertad 1055, Región de Valparaíso | WhatsApp: +56 9 1234 5678 | Correo: info@tiendavivo.com
         </p>
-        <FormularioContacto />
+        <CampoFormulario />
       </div>
 
       <div className="col-12 col-md-6">
         <h3 className="fw-bold mb-3">Dónde Encontrarnos</h3>
-        <div className="bg-secondary text-white rounded p-5 text-center">
-          <p className="mb-0 fs-5">[ Mapa interactivo de la tienda física ]</p>
+        <div className="ratio ratio-4x3 rounded overflow-hidden shadow-sm">
+          <iframe
+            title="Mapa de la tienda Sonido Vivo"
+            src="https://www.google.com/maps?q=Libertad+1055,+Vi%C3%B1a+del+Mar,+Chile&output=embed"
+            style={{ border: 0 }}
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+          />
         </div>
       </div>
     </section>

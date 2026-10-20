@@ -7,15 +7,8 @@ function CampoFormulario() {
     const [correo, setCorreo] = useState("");
     const [comentario, setComentario] = useState("");
 
-    const [mensaje, setMensaje] = useState("");
-    const [enviado, setEnviado] = useState(false);
-
 
     const enviar = () => {
-
-        setMensaje("");
-        setEnviado(false);
-
 
         if (
             nombre.trim() === "" ||
@@ -23,49 +16,14 @@ function CampoFormulario() {
             comentario.trim() === ""
         ) {
 
-            setMensaje("Debe completar todos los campos.");
+            alert("Debe completar todos los campos.");
 
             return;
 
         }
 
 
-        if (nombre.length > 100) {
-
-            setMensaje(
-                "El nombre debe tener máximo 100 caracteres."
-            );
-
-            return;
-
-        }
-
-
-        const formatoCorreo =
-            /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-
-
-        if (!formatoCorreo.test(correo) || correo.length > 100) {
-
-            setMensaje("Ingrese un correo válido.");
-
-            return;
-
-        }
-
-
-        if (comentario.length > 500) {
-
-            setMensaje(
-                "El comentario debe tener máximo 500 caracteres."
-            );
-
-            return;
-
-        }
-
-
-        setEnviado(true);
+        alert("¡Mensaje enviado exitosamente!");
 
         setNombre("");
         setCorreo("");
@@ -77,7 +35,6 @@ function CampoFormulario() {
     return (
 
         <form
-            noValidate
             onSubmit={(event) => {
 
                 event.preventDefault();
@@ -101,6 +58,7 @@ function CampoFormulario() {
                     id="nombreContacto"
                     placeholder="Tu nombre completo"
                     maxLength={100}
+                    required
                     value={nombre}
                     onChange={(event) =>
                         setNombre(event.target.value)
@@ -125,6 +83,9 @@ function CampoFormulario() {
                     id="correoContacto"
                     placeholder="ejemplo@correo.com"
                     maxLength={100}
+                    required
+                    pattern="[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}"
+                    title="Ingrese un correo válido, por ejemplo: ejemplo@correo.com"
                     value={correo}
                     onChange={(event) =>
                         setCorreo(event.target.value)
@@ -149,6 +110,7 @@ function CampoFormulario() {
                     rows={4}
                     placeholder="Escribe tu consulta aquí..."
                     maxLength={500}
+                    required
                     value={comentario}
                     onChange={(event) =>
                         setComentario(event.target.value)
@@ -156,30 +118,6 @@ function CampoFormulario() {
                 />
 
             </div>
-
-
-            {mensaje && (
-
-                <div
-                    className="alert alert-danger"
-                    role="alert"
-                >
-                    {mensaje}
-                </div>
-
-            )}
-
-
-            {enviado && (
-
-                <div
-                    className="alert alert-success"
-                    role="status"
-                >
-                    ¡Mensaje enviado exitosamente!
-                </div>
-
-            )}
 
 
             <button
