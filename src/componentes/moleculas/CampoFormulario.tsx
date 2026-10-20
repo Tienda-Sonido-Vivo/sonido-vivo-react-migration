@@ -1,3 +1,4 @@
+// src/componentes/moleculas/CampoFormulario.tsx
 import Input from "../atomos/Input";
 
 type Props = {
