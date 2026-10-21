@@ -1,3 +1,4 @@
+//src/componentes/moleculas/SelectorCantidad.tsx
 interface SelectorCantidadProps {
     cantidad: number;
     stock: number;

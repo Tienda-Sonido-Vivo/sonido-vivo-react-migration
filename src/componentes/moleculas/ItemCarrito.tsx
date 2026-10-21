@@ -1,4 +1,4 @@
-
+//src/componentes/moleculas/ItemCarrito.tsx
 import type { Producto } from "../../interfaces/Producto";
 
 interface ItemCarritoProps {
