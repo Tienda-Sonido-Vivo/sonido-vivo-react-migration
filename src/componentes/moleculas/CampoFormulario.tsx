@@ -1,124 +1,174 @@
 import { useState } from "react";
+import type { FormEvent } from "react";
 
+type Props = {
+    etiqueta: string;
+    tipo: string;
+    nombre: string;
+    valor : string;
+    alCambiar: (valor : string) => void;
+    filas?: number;
+    maxLength?: number;
+};
 
-function CampoFormulario() {
+function CampoFormulario({etiqueta, tipo, nombre, valor, alCambiar, filas = 4, maxLength}: Props) {
+
+    return(
+        <div className="mb-3">
+
+            <label
+                htmlFor={nombre}
+                className="form-label"
+            >
+                {etiqueta}
+            </label>
+
+            {tipo === "textarea" ? (
+
+                <textarea
+                    className="form-control"
+                    id={nombre}
+                    name={nombre}
+                    rows={filas}
+                    maxLength={maxLength}
+                    value={valor}
+                    onChange={(event) =>
+                        alCambiar(event.target.value)
+                    }
+                />
+
+            ) : (
+
+                <input
+                    className="form-control"
+                    type={tipo}
+                    id={nombre}
+                    name={nombre}
+                    value={valor}
+                    onChange={(event) =>
+                        alCambiar(event.target.value)
+                    }
+                />
+
+            )}
+
+        </div>
+    );
+}
+
+type FormularioConsultaProps = {
+    prefijo: string;
+    etiquetaMensaje: string;
+    textoBoton: string;
+    mensajeExito: string;
+    mensajeLimite: string;
+};
+
+function FormularioConsulta({
+    prefijo,
+    etiquetaMensaje,
+    textoBoton,
+    mensajeExito,
+    mensajeLimite
+}: FormularioConsultaProps) {
 
     const [nombre, setNombre] = useState("");
     const [correo, setCorreo] = useState("");
-    const [comentario, setComentario] = useState("");
+    const [mensaje, setMensaje] = useState("");
 
+    const manejarEnvio = (
+        event: FormEvent<HTMLFormElement>
+    ) => {
 
-    const enviar = () => {
+        event.preventDefault();
+
+        const nombreLimpio = nombre.trim();
+        const correoLimpio = correo.trim().toLowerCase();
+        const mensajeLimpio = mensaje.trim();
 
         if (
-            nombre.trim() === "" ||
-            correo.trim() === "" ||
-            comentario.trim() === ""
+            !nombreLimpio ||
+            !correoLimpio ||
+            !mensajeLimpio
         ) {
 
-            alert("Debe completar todos los campos.");
+            alert(
+                "Debe completar todos los campos."
+            );
 
             return;
-
         }
 
+        if (nombreLimpio.length > 100) {
 
-        alert("¡Mensaje enviado exitosamente!");
+            alert(
+                "El nombre debe tener máximo 100 caracteres."
+            );
+
+            return;
+        }
+
+        const formatoCorreo =
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (
+            !formatoCorreo.test(correoLimpio) ||
+            correoLimpio.length > 100
+        ) {
+
+            alert(
+                "Ingrese un correo válido."
+            );
+
+            return;
+        }
+
+        if (mensajeLimpio.length > 500) {
+
+            alert(mensajeLimite);
+
+            return;
+        }
+
+        alert(mensajeExito);
 
         setNombre("");
         setCorreo("");
-        setComentario("");
-
+        setMensaje("");
     };
-
 
     return (
 
         <form
-            onSubmit={(event) => {
-
-                event.preventDefault();
-                enviar();
-
-            }}
+            onSubmit={manejarEnvio}
+            noValidate
         >
 
-            <div className="mb-3">
+            <CampoFormulario
+                etiqueta="Nombre *"
+                tipo="text"
+                nombre={`nombre${prefijo}`}
+                valor={nombre}
+                alCambiar={setNombre}
+            />
 
-                <label
-                    htmlFor="nombreContacto"
-                    className="form-label"
-                >
-                    Nombre *
-                </label>
+            <CampoFormulario
+                etiqueta="Correo electrónico *"
+                tipo="email"
+                nombre={`correo${prefijo}`}
+                valor={correo}
+                alCambiar={setCorreo}
+            />
 
-                <input
-                    type="text"
-                    className="form-control"
-                    id="nombreContacto"
-                    placeholder="Tu nombre completo"
-                    maxLength={100}
-                    required
-                    value={nombre}
-                    onChange={(event) =>
-                        setNombre(event.target.value)
-                    }
-                />
-
-            </div>
-
-
-            <div className="mb-3">
-
-                <label
-                    htmlFor="correoContacto"
-                    className="form-label"
-                >
-                    Correo electrónico *
-                </label>
-
-                <input
-                    type="email"
-                    className="form-control"
-                    id="correoContacto"
-                    placeholder="ejemplo@correo.com"
-                    maxLength={100}
-                    required
-                    pattern="[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}"
-                    title="Ingrese un correo válido, por ejemplo: ejemplo@correo.com"
-                    value={correo}
-                    onChange={(event) =>
-                        setCorreo(event.target.value)
-                    }
-                />
-
-            </div>
-
-
-            <div className="mb-3">
-
-                <label
-                    htmlFor="mensajeContacto"
-                    className="form-label"
-                >
-                    Comentario o mensaje *
-                </label>
-
-                <textarea
-                    className="form-control"
-                    id="mensajeContacto"
-                    rows={4}
-                    placeholder="Escribe tu consulta aquí..."
-                    maxLength={500}
-                    required
-                    value={comentario}
-                    onChange={(event) =>
-                        setComentario(event.target.value)
-                    }
-                />
-
-            </div>
-
+            <CampoFormulario
+                etiqueta={etiquetaMensaje}
+                tipo="textarea"
+                nombre={`mensaje${prefijo}`}
+                valor={mensaje}
+                alCambiar={setMensaje}
+                filas={4}
+                maxLength={500}
+            />
 
             <button
                 type="submit"
@@ -127,14 +177,39 @@ function CampoFormulario() {
                     backgroundColor: "#005f7f"
                 }}
             >
-                Enviar mensaje
+                {textoBoton}
             </button>
 
         </form>
-
     );
-
 }
 
+export function FormularioContacto() {
+
+    return (
+
+        <FormularioConsulta
+            prefijo="Contacto"
+            etiquetaMensaje="Comentario o mensaje *"
+            textoBoton="Enviar mensaje"
+            mensajeExito="¡Mensaje enviado exitosamente!"
+            mensajeLimite="El comentario debe tener máximo 500 caracteres."
+        />
+    );
+}
+
+export function FormularioPregunta() {
+
+    return (
+
+        <FormularioConsulta
+            prefijo="Pregunta"
+            etiquetaMensaje="Tu pregunta *"
+            textoBoton="Enviar pregunta"
+            mensajeExito="¡Pregunta enviada exitosamente!"
+            mensajeLimite="La pregunta debe tener máximo 500 caracteres."
+        />
+    );
+}
 
 export default CampoFormulario;

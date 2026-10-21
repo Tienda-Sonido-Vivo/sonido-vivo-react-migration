@@ -13,6 +13,7 @@ import Nosotros from "./paginas/Nosotros";
 import Contacto from "./paginas/Contacto";
 import Novedades from "./paginas/Novedades";
 import NovedadDetalle from "./paginas/NovedadDetalle";
+import PreguntasFrecuentes from "./paginas/PreguntasFrecuentes";
 
 function App() {
 
@@ -63,6 +64,12 @@ function App() {
                     path="/novedades/:slug"
                     element={<NovedadDetalle />}
                 />
+                
+                <Route
+                    path="/preguntas-frecuentes"
+                    element={<PreguntasFrecuentes />}
+                />
+
 
             </Routes>
 
