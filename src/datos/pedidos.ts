@@ -5,7 +5,7 @@ import type { Pedido } from "../interfaces/Pedido";
 // Pedidos de ejemplo para probar la zona de gestión de pedidos en el panel de administración
 export const pedidosIniciales: Pedido[] = [
   {
-    codigo: "SV-2026-0001",
+    codigo: "PED-000001",
     fecha: "05 de septiembre de 2026",
     fechaISO: "2026-09-05T00:00:00Z",
     estado: "Entregado",
@@ -43,7 +43,7 @@ export const pedidosIniciales: Pedido[] = [
     },
   },
   {
-    codigo: "SV-2026-0002",
+    codigo: "PED-000002",
     fecha: "08 de septiembre de 2026",
     fechaISO: "2026-09-08T00:00:00Z",
     estado: "Despachado",
@@ -75,7 +75,7 @@ export const pedidosIniciales: Pedido[] = [
     },
   },
   {
-    codigo: "SV-2026-0003",
+    codigo: "PED-000003",
     fecha: "12 de septiembre de 2026",
     fechaISO: "2026-09-12T00:00:00Z",
     estado: "En preparación",
