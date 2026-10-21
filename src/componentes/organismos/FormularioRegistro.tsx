@@ -1,4 +1,4 @@
-//src/componentes/organismos/FormularioRegistro.tsx
+// src/componentes/organismos/FormularioRegistro.tsx
 
 import { useState } from "react";
 import type { FormEvent } from "react";
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { regionesComunas } from "../../datos/regionesComunas";
 import type { Usuario } from "../../interfaces/Usuario";
+import { normalizarRun, validarRun } from "../../utilidades/run";
 
 interface FormularioRegistroProps {
   usuarios: Usuario[];
@@ -30,14 +31,16 @@ function FormularioRegistro({
   const [clave, setClave] = useState("");
   const [confirmarClave, setConfirmarClave] = useState("");
 
-  const comunasDisponibles = region ? (regionesComunas[region] ?? []) : [];
+  const comunasDisponibles = region ? regionesComunas[region] ?? [] : [];
 
   const manejarEnvio = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const runLimpio = run.trim();
+    const runNormalizado = normalizarRun(runLimpio);
     const emailLimpio = email.trim().toLowerCase();
 
+    // 1. Validar campos obligatorios
     if (
       !runLimpio ||
       !nombre.trim() ||
@@ -50,79 +53,75 @@ function FormularioRegistro({
       !confirmarClave
     ) {
       alert("Debe completar todos los campos obligatorios.");
-
       return;
     }
 
-    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!formatoCorreo.test(emailLimpio)) {
-      alert("Ingrese un correo electrónico válido.");
-
+    // 2. Validar formato de RUT chileno con algoritmo de dígito verificador
+    if (!validarRun(runLimpio)) {
+      alert(
+        "RUN inválido. Ingresa un RUT chileno válido (ej: 12345678-5 o 12.345.678-5)."
+      );
       return;
     }
 
-    const correoExiste = usuarios.some(
-      (usuario) => usuario.email.toLowerCase() === emailLimpio,
-    );
-
-    if (correoExiste) {
-      alert("Ya existe un usuario registrado con ese correo.");
-
-      return;
-    }
-
+    // 3. Validar si el RUN ya se encuentra registrado
     const runExiste = usuarios.some(
-      (usuario) => usuario.run.toLowerCase() === runLimpio.toLowerCase(),
+      (usuario) => normalizarRun(usuario.run) === runNormalizado
     );
 
     if (runExiste) {
       alert("Ya existe un usuario registrado con ese RUN.");
-
       return;
     }
 
+    // 4. Validar formato de correo electrónico
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formatoCorreo.test(emailLimpio)) {
+      alert("Ingrese un correo electrónico válido.");
+      return;
+    }
+
+    // 5. Validar correo duplicado
+    const correoExiste = usuarios.some(
+      (usuario) => usuario.email.toLowerCase() === emailLimpio
+    );
+
+    if (correoExiste) {
+      alert("Ya existe un usuario registrado con ese correo.");
+      return;
+    }
+
+    // 6. Validar largo de nombres y apellidos
     if (nombre.trim().length < 2 || apellidos.trim().length < 2) {
       alert("El nombre y los apellidos deben tener al menos 2 caracteres.");
-
       return;
     }
 
+    // 7. Validar largo de clave y coincidencia
     if (clave.length < 4 || clave.length > 10) {
       alert("La clave debe tener entre 4 y 10 caracteres.");
-
       return;
     }
 
     if (clave !== confirmarClave) {
       alert("Las claves no coinciden.");
-
       return;
     }
 
+    // Construcción del nuevo usuario con el RUN normalizado
     const nuevoUsuario: Usuario = {
-      run: runLimpio,
-
+      run: runNormalizado,
       nombre: nombre.trim(),
-
       apellidos: apellidos.trim(),
-
       email: emailLimpio,
-
       fechaNacimiento: fechaNacimiento || undefined,
-
       region,
-
       comuna,
-
       direccion: direccion.trim(),
-
       rol: "Cliente",
-
       estado: "Activo",
-
       auditoria: [],
-
       clave,
     };
 
@@ -194,7 +193,6 @@ function FormularioRegistro({
             value={region}
             onChange={(event) => {
               setRegion(event.target.value);
-
               setComuna("");
             }}
           >

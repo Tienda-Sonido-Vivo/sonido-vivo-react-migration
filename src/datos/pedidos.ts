@@ -2,15 +2,26 @@
 
 import type { Pedido } from "../interfaces/Pedido";
 
-// Pedidos de ejemplo para probar el panel admin mientras no esté migrado el checkout
+// Pedidos de ejemplo para probar la zona de gestión de pedidos en el panel de administración
 export const pedidosIniciales: Pedido[] = [
   {
     codigo: "SV-2026-0001",
     fecha: "05 de septiembre de 2026",
+    fechaISO: "2026-09-05T00:00:00Z",
     estado: "Entregado",
     productos: [
-      { codigo: "GA001", cantidad: 1 },
-      { codigo: "GA003", cantidad: 1 },
+      {
+        codigo: "GA001",
+        nombre: "Guitarra Acústica Yamaha F310",
+        precio: 109990,
+        cantidad: 1,
+      },
+      {
+        codigo: "GA003",
+        nombre: "Guitarra Electroacústica Fender CD-60SCE",
+        precio: 109990,
+        cantidad: 1,
+      },
     ],
     subtotal: 219980,
     envio: 8990,
@@ -18,6 +29,7 @@ export const pedidosIniciales: Pedido[] = [
     total: 228970,
     metodoEntrega: "despacho",
     metodoPago: "debito",
+    correoCliente: "usuario@demo.cl",
     cliente: {
       nombre: "Ana",
       apellidos: "Martínez Díaz",
@@ -26,20 +38,30 @@ export const pedidosIniciales: Pedido[] = [
       region: "Metropolitana de Santiago",
       comuna: "Ñuñoa",
       direccion: "Avenida Siempre Viva 123",
+      numeroVivienda: "Piso 5",
+      codigoPostal: "8340000",
     },
   },
-
   {
     codigo: "SV-2026-0002",
     fecha: "08 de septiembre de 2026",
+    fechaISO: "2026-09-08T00:00:00Z",
     estado: "Despachado",
-    productos: [{ codigo: "BA002", cantidad: 1 }],
+    productos: [
+      {
+        codigo: "BA002",
+        nombre: "Bajo Eléctrico Ibanez GSR200",
+        precio: 699990,
+        cantidad: 1,
+      },
+    ],
     subtotal: 699990,
     envio: 8990,
     iva: 111763,
     total: 708980,
     metodoEntrega: "despacho",
     metodoPago: "credito",
+    correoCliente: "luis.fuentes@correo.cl",
     cliente: {
       nombre: "Luis",
       apellidos: "Fuentes Vera",
@@ -49,20 +71,29 @@ export const pedidosIniciales: Pedido[] = [
       comuna: "Concepción",
       direccion: "Calle Los Aromos 456",
       numeroVivienda: "Depto 12",
+      codigoPostal: "4030000",
     },
   },
-
   {
     codigo: "SV-2026-0003",
     fecha: "12 de septiembre de 2026",
+    fechaISO: "2026-09-12T00:00:00Z",
     estado: "En preparación",
-    productos: [{ codigo: "BT003", cantidad: 2 }],
+    productos: [
+      {
+        codigo: "BT003",
+        nombre: "Batería Acústica Pearl Roadshow",
+        precio: 89990,
+        cantidad: 2,
+      },
+    ],
     subtotal: 179980,
     envio: 0,
     iva: 28736,
     total: 179980,
     metodoEntrega: "retiro",
     metodoPago: "transbank",
+    correoCliente: "camila.rojas@correo.cl",
     cliente: {
       nombre: "Camila",
       apellidos: "Rojas Pino",
@@ -71,6 +102,8 @@ export const pedidosIniciales: Pedido[] = [
       region: "Valparaíso",
       comuna: "Viña del Mar",
       direccion: "Avenida España 789",
+      numeroVivienda: "Casa B",
+      codigoPostal: "2520000",
     },
   },
 ];

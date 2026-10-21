@@ -8,7 +8,7 @@ import { fechaHoy } from "../../utilidades/formato";
 import { formatearRun, normalizarRun, validarRun } from "../../utilidades/run";
 
 import ModalBase from "../moleculas/ModalBase";
-import CampoConError from "../moleculas/CampoConError";
+import CampoFormulario from "../moleculas/CampoFormulario";
 
 interface FormularioUsuario {
   run: string;
@@ -23,8 +23,6 @@ interface FormularioUsuario {
   estado: Usuario["estado"];
   clave: string;
 }
-
-type Errores = Partial<Record<keyof FormularioUsuario, string>>;
 
 interface ModalUsuarioProps {
   // null = crear un usuario nuevo
@@ -85,8 +83,6 @@ function ModalUsuario({
     formularioInicial(usuario),
   );
 
-  const [errores, setErrores] = useState<Errores>({});
-
   const cambiar = <K extends keyof FormularioUsuario>(
     campo: K,
     valor: FormularioUsuario[K],
@@ -99,87 +95,83 @@ function ModalUsuario({
     setFormulario((anterior) => ({ ...anterior, region, comuna: "" }));
   };
 
-  const validar = (): Errores => {
-    const nuevos: Errores = {};
-
+  const guardar = () => {
     const runNormalizado = normalizarRun(formulario.run);
     const email = formulario.email.trim();
 
     if (esNuevo) {
       if (formulario.run.trim() === "") {
-        nuevos.run = "El RUN es obligatorio.";
-      } else if (!validarRun(formulario.run.trim().toUpperCase())) {
-        nuevos.run = "RUN inválido. Sin puntos y con guion (ej: 12345678-5).";
-      } else if (
-        usuarios.some((u) => normalizarRun(u.run) === runNormalizado)
-      ) {
-        nuevos.run = "Ya existe un usuario con ese RUN.";
+        alert("El RUN es obligatorio.");
+        return;
+      }
+      if (!validarRun(formulario.run.trim().toUpperCase())) {
+        alert("RUN inválido. Debe ser sin puntos y con guion (ej: 12345678-5).");
+        return;
+      }
+      if (usuarios.some((u) => normalizarRun(u.run) === runNormalizado)) {
+        alert("Ya existe un usuario registrado con ese RUN.");
+        return;
       }
     }
 
     if (formulario.nombre.trim().length < 3) {
-      nuevos.nombre = "El nombre debe tener al menos 3 caracteres.";
+      alert("El nombre debe tener al menos 3 caracteres.");
+      return;
     }
 
     if (formulario.apellidos.trim().length < 3) {
-      nuevos.apellidos = "Los apellidos deben tener al menos 3 caracteres.";
+      alert("Los apellidos deben tener al menos 3 caracteres.");
+      return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      nuevos.email = "Ingresa un correo válido (ej: nombre@dominio.cl).";
-    } else if (
+      alert("Ingresa un correo electrónico válido.");
+      return;
+    }
+    if (
       usuarios.some(
         (u) =>
           u.email.toLowerCase() === email.toLowerCase() &&
           u.run !== usuario?.run,
       )
     ) {
-      nuevos.email = "Ya existe un usuario con ese correo.";
+      alert("Ya existe un usuario registrado con ese correo.");
+      return;
     }
 
     if (
       formulario.fechaNacimiento !== "" &&
       formulario.fechaNacimiento > new Date().toISOString().slice(0, 10)
     ) {
-      nuevos.fechaNacimiento = "La fecha no puede ser futura.";
+      alert("La fecha de nacimiento no puede ser futura.");
+      return;
     }
 
     if (formulario.region === "") {
-      nuevos.region = "Selecciona una región.";
+      alert("Selecciona una región.");
+      return;
     }
 
     if (formulario.comuna === "") {
-      nuevos.comuna = "Selecciona una comuna.";
+      alert("Selecciona una comuna.");
+      return;
     }
 
     if (formulario.direccion.trim() === "") {
-      nuevos.direccion = "La dirección es obligatoria.";
+      alert("La dirección es obligatoria.");
+      return;
     }
 
-    // Misma regla que el Login: entre 4 y 10 caracteres
     const claveObligatoria = esNuevo || formulario.clave !== "";
-
     if (
       claveObligatoria &&
       (formulario.clave.length < 4 || formulario.clave.length > 10)
     ) {
-      nuevos.clave = "La clave debe tener entre 4 y 10 caracteres.";
-    }
-
-    return nuevos;
-  };
-
-  const guardar = () => {
-    const nuevos = validar();
-
-    setErrores(nuevos);
-
-    if (Object.keys(nuevos).length > 0) {
+      alert("La clave debe tener entre 4 y 10 caracteres.");
       return;
     }
 
     const hoy = fechaHoy();
-
     const auditoria = [...(usuario?.auditoria ?? [])];
 
     if (esNuevo) {
@@ -213,7 +205,6 @@ function ModalUsuario({
       rol: formulario.rol,
       estado: formulario.estado,
       auditoria,
-      // Al editar, si la clave queda vacía se conserva la anterior
       clave:
         formulario.clave !== "" ? formulario.clave : (usuario?.clave ?? ""),
     };
@@ -245,133 +236,86 @@ function ModalUsuario({
     >
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="usuarioRun"
+          <CampoFormulario
             etiqueta="RUN"
-            error={errores.run}
-            ayuda={
-              esNuevo
-                ? "Sin puntos y con guion. Ej: 12345678-5"
-                : "El RUN no se puede modificar."
-            }
-          >
-            <input
-              id="usuarioRun"
-              type="text"
-              className={"form-control" + (errores.run ? " is-invalid" : "")}
-              maxLength={10}
-              value={formulario.run}
-              disabled={!esNuevo}
-              onChange={(e) => cambiar("run", e.target.value)}
-            />
-          </CampoConError>
+            tipo="text"
+            nombre="run"
+            valor={formulario.run}
+            alCambiar={(valor) => cambiar("run", valor)}
+          />
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="usuarioFecha"
+          <CampoFormulario
             etiqueta="Fecha de nacimiento"
-            error={errores.fechaNacimiento}
-          >
-            <input
-              id="usuarioFecha"
-              type="date"
-              className={
-                "form-control" + (errores.fechaNacimiento ? " is-invalid" : "")
-              }
-              value={formulario.fechaNacimiento}
-              onChange={(e) => cambiar("fechaNacimiento", e.target.value)}
-            />
-          </CampoConError>
+            tipo="date"
+            nombre="fechaNacimiento"
+            valor={formulario.fechaNacimiento}
+            alCambiar={(valor) => cambiar("fechaNacimiento", valor)}
+          />
         </div>
       </div>
 
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="usuarioNombre"
+          <CampoFormulario
             etiqueta="Nombre"
-            error={errores.nombre}
-          >
-            <input
-              id="usuarioNombre"
-              type="text"
-              className={"form-control" + (errores.nombre ? " is-invalid" : "")}
-              maxLength={50}
-              value={formulario.nombre}
-              onChange={(e) => cambiar("nombre", e.target.value)}
-            />
-          </CampoConError>
+            tipo="text"
+            nombre="nombre"
+            valor={formulario.nombre}
+            alCambiar={(valor) => cambiar("nombre", valor)}
+          />
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="usuarioApellidos"
+          <CampoFormulario
             etiqueta="Apellidos"
-            error={errores.apellidos}
-          >
-            <input
-              id="usuarioApellidos"
-              type="text"
-              className={
-                "form-control" + (errores.apellidos ? " is-invalid" : "")
-              }
-              maxLength={100}
-              value={formulario.apellidos}
-              onChange={(e) => cambiar("apellidos", e.target.value)}
-            />
-          </CampoConError>
+            tipo="text"
+            nombre="apellidos"
+            valor={formulario.apellidos}
+            alCambiar={(valor) => cambiar("apellidos", valor)}
+          />
         </div>
       </div>
 
-      <CampoConError
-        id="usuarioEmail"
+      <CampoFormulario
         etiqueta="Correo electrónico"
-        error={errores.email}
-      >
-        <input
-          id="usuarioEmail"
-          type="email"
-          className={"form-control" + (errores.email ? " is-invalid" : "")}
-          maxLength={100}
-          value={formulario.email}
-          onChange={(e) => cambiar("email", e.target.value)}
-        />
-      </CampoConError>
+        tipo="email"
+        nombre="email"
+        valor={formulario.email}
+        alCambiar={(valor) => cambiar("email", valor)}
+      />
 
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="usuarioRegion"
-            etiqueta="Región"
-            error={errores.region}
-          >
+          <div className="mb-3">
+            <label htmlFor="usuarioRegion" className="form-label fw-semibold">
+              Región
+            </label>
             <select
               id="usuarioRegion"
-              className={"form-select" + (errores.region ? " is-invalid" : "")}
+              className="form-select"
               value={formulario.region}
               onChange={(e) => cambiarRegion(e.target.value)}
             >
               <option value="">Selecciona una región</option>
-
               {Object.keys(regionesComunas).map((region) => (
                 <option key={region} value={region}>
                   {region}
                 </option>
               ))}
             </select>
-          </CampoConError>
+          </div>
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="usuarioComuna"
-            etiqueta="Comuna"
-            error={errores.comuna}
-          >
+          <div className="mb-3">
+            <label htmlFor="usuarioComuna" className="form-label fw-semibold">
+              Comuna
+            </label>
             <select
               id="usuarioComuna"
-              className={"form-select" + (errores.comuna ? " is-invalid" : "")}
+              className="form-select"
               value={formulario.comuna}
               disabled={formulario.region === ""}
               onChange={(e) => cambiar("comuna", e.target.value)}
@@ -381,41 +325,30 @@ function ModalUsuario({
                   ? "Primero selecciona una región"
                   : "Selecciona una comuna"}
               </option>
-
               {comunasDisponibles.map((comuna) => (
                 <option key={comuna} value={comuna}>
                   {comuna}
                 </option>
               ))}
             </select>
-          </CampoConError>
+          </div>
         </div>
       </div>
 
-      <CampoConError
-        id="usuarioDireccion"
+      <CampoFormulario
         etiqueta="Dirección"
-        error={errores.direccion}
-      >
-        <input
-          id="usuarioDireccion"
-          type="text"
-          className={"form-control" + (errores.direccion ? " is-invalid" : "")}
-          maxLength={150}
-          value={formulario.direccion}
-          onChange={(e) => cambiar("direccion", e.target.value)}
-        />
-      </CampoConError>
+        tipo="text"
+        nombre="direccion"
+        valor={formulario.direccion}
+        alCambiar={(valor) => cambiar("direccion", valor)}
+      />
 
       <div className="row">
         <div className="col-12 col-md-4">
-          <CampoConError
-            id="usuarioRol"
-            etiqueta="Rol"
-            ayuda={
-              esCuentaPropia ? "No puedes cambiar tu propio rol." : undefined
-            }
-          >
+          <div className="mb-3">
+            <label htmlFor="usuarioRol" className="form-label fw-semibold">
+              Rol
+            </label>
             <select
               id="usuarioRol"
               className="form-select"
@@ -427,19 +360,17 @@ function ModalUsuario({
               <option value="Vendedor">Vendedor</option>
               <option value="Cliente">Cliente</option>
             </select>
-          </CampoConError>
+            {esCuentaPropia && (
+              <div className="form-text">No puedes cambiar tu propio rol.</div>
+            )}
+          </div>
         </div>
 
         <div className="col-12 col-md-4">
-          <CampoConError
-            id="usuarioEstado"
-            etiqueta="Estado"
-            ayuda={
-              esCuentaPropia
-                ? "No puedes desactivar tu propia cuenta."
-                : undefined
-            }
-          >
+          <div className="mb-3">
+            <label htmlFor="usuarioEstado" className="form-label fw-semibold">
+              Estado
+            </label>
             <select
               id="usuarioEstado"
               className="form-select"
@@ -452,30 +383,22 @@ function ModalUsuario({
               <option value="Activo">Activo</option>
               <option value="Inactivo">Inactivo</option>
             </select>
-          </CampoConError>
+            {esCuentaPropia && (
+              <div className="form-text">
+                No puedes desactivar tu propia cuenta.
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="col-12 col-md-4">
-          <CampoConError
-            id="usuarioClave"
+          <CampoFormulario
             etiqueta={esNuevo ? "Clave" : "Nueva clave"}
-            error={errores.clave}
-            ayuda={
-              esNuevo
-                ? "Entre 4 y 10 caracteres."
-                : "Déjala vacía para no cambiarla."
-            }
-          >
-            <input
-              id="usuarioClave"
-              type="password"
-              className={"form-control" + (errores.clave ? " is-invalid" : "")}
-              maxLength={10}
-              autoComplete="new-password"
-              value={formulario.clave}
-              onChange={(e) => cambiar("clave", e.target.value)}
-            />
-          </CampoConError>
+            tipo="password"
+            nombre="clave"
+            valor={formulario.clave}
+            alCambiar={(valor) => cambiar("clave", valor)}
+          />
         </div>
       </div>
     </ModalBase>

@@ -3,7 +3,6 @@
 import { Outlet } from "react-router-dom";
 
 import SidebarAdmin from "../componentes/organismos/SidebarAdmin";
-import Footer from "../componentes/organismos/Footer";
 
 import "../estilos/admin.css";
 
@@ -43,7 +42,7 @@ function LayoutAdmin() {
         </main>
       </div>
 
-      <Footer />
+      
     </div>
   );
 }

@@ -6,7 +6,7 @@ import type { Producto } from "../../interfaces/Producto";
 import { categorias } from "../../datos/categorias";
 
 import ModalBase from "../moleculas/ModalBase";
-import CampoConError from "../moleculas/CampoConError";
+import CampoFormulario from "../moleculas/CampoFormulario";
 
 interface FormularioProducto {
   codigo: string;
@@ -19,8 +19,6 @@ interface FormularioProducto {
   imagen: string;
   descripcion: string;
 }
-
-type Errores = Partial<Record<keyof FormularioProducto, string>>;
 
 interface ModalProductoProps {
   // null = crear un producto nuevo
@@ -77,70 +75,63 @@ function ModalProducto({
     formularioInicial(producto),
   );
 
-  const [errores, setErrores] = useState<Errores>({});
-
   const cambiar = (campo: keyof FormularioProducto, valor: string) => {
     setFormulario((anterior) => ({ ...anterior, [campo]: valor }));
   };
 
-  const validar = (): Errores => {
-    const nuevos: Errores = {};
-
+  const guardar = () => {
     const codigo = formulario.codigo.trim().toUpperCase();
 
     if (esNuevo) {
       if (!/^[A-Z]{2}\d{3}$/.test(codigo)) {
-        nuevos.codigo =
-          "Formato inválido. Dos letras y tres números (ej: GA001).";
-      } else if (productos.some((p) => p.codigo === codigo)) {
-        nuevos.codigo = "Ya existe un producto con ese código.";
+        alert(
+          "Formato de código inválido. Debe incluir dos letras y tres números (ej: GA001).",
+        );
+        return;
+      }
+      if (productos.some((p) => p.codigo === codigo)) {
+        alert("Ya existe un producto registrado con ese código.");
+        return;
       }
     }
 
     if (formulario.nombre.trim().length < 3) {
-      nuevos.nombre = "El nombre debe tener al menos 3 caracteres.";
+      alert("El nombre del producto debe tener al menos 3 caracteres.");
+      return;
     }
 
     if (formulario.categoria === "") {
-      nuevos.categoria = "Selecciona una categoría.";
+      alert("Debe seleccionar una categoría.");
+      return;
     }
 
     if (formulario.marca.trim() === "") {
-      nuevos.marca = "La marca es obligatoria.";
+      alert("La marca es obligatoria.");
+      return;
     }
 
     if (formulario.modelo.trim() === "") {
-      nuevos.modelo = "El modelo es obligatorio.";
+      alert("El modelo es obligatorio.");
+      return;
     }
 
     if (!/^\d+$/.test(formulario.stock)) {
-      nuevos.stock = "El stock debe ser un número entero, 0 o mayor.";
+      alert("El stock debe ser un número entero mayor o igual a 0.");
+      return;
     }
 
     if (!/^\d+$/.test(formulario.precio) || Number(formulario.precio) <= 0) {
-      nuevos.precio = "El precio debe ser un número entero mayor a 0.";
+      alert("El precio debe ser un número entero mayor a 0.");
+      return;
     }
 
     if (formulario.descripcion.length > 200) {
-      nuevos.descripcion = "Máximo 200 caracteres.";
-    }
-
-    return nuevos;
-  };
-
-  const guardar = () => {
-    const nuevos = validar();
-
-    setErrores(nuevos);
-
-    if (Object.keys(nuevos).length > 0) {
+      alert("La descripción no puede superar los 200 caracteres.");
       return;
     }
 
     const resultado: Producto = {
-      codigo: esNuevo
-        ? formulario.codigo.trim().toUpperCase()
-        : producto.codigo,
+      codigo: esNuevo ? codigo : producto.codigo,
       nombre: formulario.nombre.trim(),
       categoria: formulario.categoria,
       marca: formulario.marca.trim(),
@@ -194,158 +185,100 @@ function ModalProducto({
 
       <div className="row">
         <div className="col-12 col-md-4">
-          <CampoConError
-            id="productoCodigo"
+          <CampoFormulario
             etiqueta="Código"
-            error={errores.codigo}
-            ayuda={esNuevo ? "Ej: GA001" : "El código no se puede modificar."}
-          >
-            <input
-              id="productoCodigo"
-              type="text"
-              className={"form-control" + (errores.codigo ? " is-invalid" : "")}
-              maxLength={5}
-              value={formulario.codigo}
-              disabled={!esNuevo}
-              onChange={(e) => cambiar("codigo", e.target.value)}
-            />
-          </CampoConError>
+            tipo="text"
+            nombre="codigo"
+            valor={formulario.codigo}
+            alCambiar={(valor) => cambiar("codigo", valor)}
+          />
         </div>
 
         <div className="col-12 col-md-8">
-          <CampoConError
-            id="productoCategoria"
-            etiqueta="Categoría"
-            error={errores.categoria}
-          >
+          <div className="mb-3">
+            <label
+              htmlFor="productoCategoria"
+              className="form-label fw-semibold"
+            >
+              Categoría
+            </label>
             <select
               id="productoCategoria"
-              className={
-                "form-select" + (errores.categoria ? " is-invalid" : "")
-              }
+              className="form-select"
               value={formulario.categoria}
               disabled={soloStock}
               onChange={(e) => cambiar("categoria", e.target.value)}
             >
               <option value="">Selecciona una categoría</option>
-
               {categoriasDisponibles.map((categoria) => (
                 <option key={categoria} value={categoria}>
                   {categoria}
                 </option>
               ))}
             </select>
-          </CampoConError>
+          </div>
         </div>
       </div>
 
-      <CampoConError
-        id="productoNombre"
+      <CampoFormulario
         etiqueta="Nombre del producto"
-        error={errores.nombre}
-      >
-        <input
-          id="productoNombre"
-          type="text"
-          className={"form-control" + (errores.nombre ? " is-invalid" : "")}
-          maxLength={100}
-          value={formulario.nombre}
-          disabled={soloStock}
-          onChange={(e) => cambiar("nombre", e.target.value)}
-        />
-      </CampoConError>
+        tipo="text"
+        nombre="nombre"
+        valor={formulario.nombre}
+        alCambiar={(valor) => cambiar("nombre", valor)}
+      />
 
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="productoMarca"
+          <CampoFormulario
             etiqueta="Marca"
-            error={errores.marca}
-          >
-            <input
-              id="productoMarca"
-              type="text"
-              className={"form-control" + (errores.marca ? " is-invalid" : "")}
-              maxLength={50}
-              value={formulario.marca}
-              disabled={soloStock}
-              onChange={(e) => cambiar("marca", e.target.value)}
-            />
-          </CampoConError>
+            tipo="text"
+            nombre="marca"
+            valor={formulario.marca}
+            alCambiar={(valor) => cambiar("marca", valor)}
+          />
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="productoModelo"
+          <CampoFormulario
             etiqueta="Modelo"
-            error={errores.modelo}
-          >
-            <input
-              id="productoModelo"
-              type="text"
-              className={"form-control" + (errores.modelo ? " is-invalid" : "")}
-              maxLength={50}
-              value={formulario.modelo}
-              disabled={soloStock}
-              onChange={(e) => cambiar("modelo", e.target.value)}
-            />
-          </CampoConError>
+            tipo="text"
+            nombre="modelo"
+            valor={formulario.modelo}
+            alCambiar={(valor) => cambiar("modelo", valor)}
+          />
         </div>
       </div>
 
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="productoStock"
+          <CampoFormulario
             etiqueta="Stock"
-            error={errores.stock}
-          >
-            <input
-              id="productoStock"
-              type="number"
-              min={0}
-              step={1}
-              className={"form-control" + (errores.stock ? " is-invalid" : "")}
-              value={formulario.stock}
-              onChange={(e) => cambiar("stock", e.target.value)}
-            />
-          </CampoConError>
+            tipo="number"
+            nombre="stock"
+            valor={formulario.stock}
+            alCambiar={(valor) => cambiar("stock", valor)}
+          />
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoConError
-            id="productoPrecio"
+          <CampoFormulario
             etiqueta="Precio (CLP)"
-            error={errores.precio}
-          >
-            <input
-              id="productoPrecio"
-              type="number"
-              min={1}
-              step={1}
-              className={"form-control" + (errores.precio ? " is-invalid" : "")}
-              value={formulario.precio}
-              disabled={soloStock}
-              onChange={(e) => cambiar("precio", e.target.value)}
-            />
-          </CampoConError>
+            tipo="number"
+            nombre="precio"
+            valor={formulario.precio}
+            alCambiar={(valor) => cambiar("precio", valor)}
+          />
         </div>
       </div>
 
-      <CampoConError
-        id="productoImagen"
+      <CampoFormulario
         etiqueta="Ruta de la imagen"
-        ayuda="Ej: /img/tarjetas/Guitarra Acustica Yamaha F310.webp"
-      >
-        <input
-          id="productoImagen"
-          type="text"
-          className="form-control"
-          value={formulario.imagen}
-          disabled={soloStock}
-          onChange={(e) => cambiar("imagen", e.target.value)}
-        />
-      </CampoConError>
+        tipo="text"
+        nombre="imagen"
+        valor={formulario.imagen}
+        alCambiar={(valor) => cambiar("imagen", valor)}
+      />
 
       {formulario.imagen.trim() !== "" && (
         <img
@@ -362,23 +295,22 @@ function ModalProducto({
         />
       )}
 
-      <CampoConError
-        id="productoDescripcion"
-        etiqueta="Descripción breve"
-        error={errores.descripcion}
-        ayuda={`${formulario.descripcion.length}/200 caracteres`}
-      >
+      <div className="mb-3">
+        <label htmlFor="productoDescripcion" className="form-label fw-semibold">
+          Descripción breve
+        </label>
         <textarea
           id="productoDescripcion"
-          className={
-            "form-control" + (errores.descripcion ? " is-invalid" : "")
-          }
+          className="form-control"
           rows={3}
           value={formulario.descripcion}
           disabled={soloStock}
           onChange={(e) => cambiar("descripcion", e.target.value)}
         />
-      </CampoConError>
+        <div className="form-text">
+          {`${formulario.descripcion.length}/200 caracteres`}
+        </div>
+      </div>
     </ModalBase>
   );
 }
