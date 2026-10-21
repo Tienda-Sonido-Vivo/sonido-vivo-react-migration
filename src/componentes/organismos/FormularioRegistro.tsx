@@ -9,360 +9,260 @@ import { regionesComunas } from "../../datos/regionesComunas";
 import type { Usuario } from "../../interfaces/Usuario";
 
 interface FormularioRegistroProps {
-    usuarios: Usuario[];
-    onRegistrarUsuario: (usuario: Usuario) => void;
+  usuarios: Usuario[];
+  onRegistrarUsuario: (usuario: Usuario) => void;
 }
 
 function FormularioRegistro({
-    usuarios,
-    onRegistrarUsuario
+  usuarios,
+  onRegistrarUsuario,
 }: FormularioRegistroProps) {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [run, setRun] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellidos, setApellidos] = useState("");
+  const [email, setEmail] = useState("");
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
+  const [region, setRegion] = useState("");
+  const [comuna, setComuna] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [clave, setClave] = useState("");
+  const [confirmarClave, setConfirmarClave] = useState("");
 
-    const [run, setRun] = useState("");
-    const [nombre, setNombre] = useState("");
-    const [apellidos, setApellidos] = useState("");
-    const [email, setEmail] = useState("");
-    const [fechaNacimiento, setFechaNacimiento] =
-        useState("");
-    const [region, setRegion] = useState("");
-    const [comuna, setComuna] = useState("");
-    const [direccion, setDireccion] = useState("");
-    const [clave, setClave] = useState("");
-    const [confirmarClave, setConfirmarClave] =
-        useState("");
+  const comunasDisponibles = region ? (regionesComunas[region] ?? []) : [];
 
-    const comunasDisponibles = region
-        ? regionesComunas[region] ?? []
-        : [];
+  const manejarEnvio = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    const manejarEnvio = (
-        event: FormEvent<HTMLFormElement>
-    ) => {
+    const runLimpio = run.trim();
+    const emailLimpio = email.trim().toLowerCase();
 
-        event.preventDefault();
+    if (
+      !runLimpio ||
+      !nombre.trim() ||
+      !apellidos.trim() ||
+      !emailLimpio ||
+      !region ||
+      !comuna ||
+      !direccion.trim() ||
+      !clave ||
+      !confirmarClave
+    ) {
+      alert("Debe completar todos los campos obligatorios.");
 
-        const runLimpio = run.trim();
-        const emailLimpio = email.trim().toLowerCase();
+      return;
+    }
 
-        if (
-            !runLimpio ||
-            !nombre.trim() ||
-            !apellidos.trim() ||
-            !emailLimpio ||
-            !region ||
-            !comuna ||
-            !direccion.trim() ||
-            !clave ||
-            !confirmarClave
-        ) {
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-            alert(
-                "Debe completar todos los campos obligatorios."
-            );
+    if (!formatoCorreo.test(emailLimpio)) {
+      alert("Ingrese un correo electrónico válido.");
 
-            return;
-        }
+      return;
+    }
 
-        const formatoCorreo =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const correoExiste = usuarios.some(
+      (usuario) => usuario.email.toLowerCase() === emailLimpio,
+    );
 
-        if (!formatoCorreo.test(emailLimpio)) {
+    if (correoExiste) {
+      alert("Ya existe un usuario registrado con ese correo.");
 
-            alert(
-                "Ingrese un correo electrónico válido."
-            );
+      return;
+    }
 
-            return;
-        }
+    const runExiste = usuarios.some(
+      (usuario) => usuario.run.toLowerCase() === runLimpio.toLowerCase(),
+    );
 
-        const correoExiste = usuarios.some(
-            (usuario) =>
-                usuario.email.toLowerCase() ===
-                emailLimpio
-        );
+    if (runExiste) {
+      alert("Ya existe un usuario registrado con ese RUN.");
 
-        if (correoExiste) {
+      return;
+    }
 
-            alert(
-                "Ya existe un usuario registrado con ese correo."
-            );
+    if (nombre.trim().length < 2 || apellidos.trim().length < 2) {
+      alert("El nombre y los apellidos deben tener al menos 2 caracteres.");
 
-            return;
-        }
+      return;
+    }
 
-        const runExiste = usuarios.some(
-            (usuario) =>
-                usuario.run.toLowerCase() ===
-                runLimpio.toLowerCase()
-        );
+    if (clave.length < 4 || clave.length > 10) {
+      alert("La clave debe tener entre 4 y 10 caracteres.");
 
-        if (runExiste) {
+      return;
+    }
 
-            alert(
-                "Ya existe un usuario registrado con ese RUN."
-            );
+    if (clave !== confirmarClave) {
+      alert("Las claves no coinciden.");
 
-            return;
-        }
+      return;
+    }
 
-        if (
-            nombre.trim().length < 2 ||
-            apellidos.trim().length < 2
-        ) {
+    const nuevoUsuario: Usuario = {
+      run: runLimpio,
 
-            alert(
-                "El nombre y los apellidos deben tener al menos 2 caracteres."
-            );
+      nombre: nombre.trim(),
 
-            return;
-        }
+      apellidos: apellidos.trim(),
 
-        if (clave.length < 4 || clave.length > 10) {
+      email: emailLimpio,
 
-            alert(
-                "La clave debe tener entre 4 y 10 caracteres."
-            );
+      fechaNacimiento: fechaNacimiento || undefined,
 
-            return;
-        }
+      region,
 
-        if (clave !== confirmarClave) {
+      comuna,
 
-            alert(
-                "Las claves no coinciden."
-            );
+      direccion: direccion.trim(),
 
-            return;
-        }
+      rol: "Cliente",
 
-        const nuevoUsuario: Usuario = {
+      estado: "Activo",
 
-            run: runLimpio,
+      auditoria: [],
 
-            nombre: nombre.trim(),
-
-            apellidos: apellidos.trim(),
-
-            email: emailLimpio,
-
-            fechaNacimiento:
-                fechaNacimiento || undefined,
-
-            region,
-
-            comuna,
-
-            direccion: direccion.trim(),
-
-            rol: "Cliente",
-
-            estado: "Activo",
-
-            auditoria: [],
-
-            clave
-        };
-
-        onRegistrarUsuario(nuevoUsuario);
-
-        alert(
-            "Cuenta creada correctamente. Ahora puedes iniciar sesión."
-        );
-
-        navigate("/login");
+      clave,
     };
 
-    return (
+    onRegistrarUsuario(nuevoUsuario);
 
-        <form
-            onSubmit={manejarEnvio}
-            noValidate
-        >
+    alert("Cuenta creada correctamente. Ahora puedes iniciar sesión.");
 
-            <CampoFormulario
-                etiqueta="RUN"
-                tipo="text"
-                nombre="run"
-                valor={run}
-                alCambiar={setRun}
-            />
+    navigate("/login");
+  };
 
-            <div className="row">
+  return (
+    <form onSubmit={manejarEnvio} noValidate>
+      <CampoFormulario
+        etiqueta="RUN"
+        tipo="text"
+        nombre="run"
+        valor={run}
+        alCambiar={setRun}
+      />
 
-                <div className="col-12 col-md-6">
+      <div className="row">
+        <div className="col-12 col-md-6">
+          <CampoFormulario
+            etiqueta="Nombre"
+            tipo="text"
+            nombre="nombre"
+            valor={nombre}
+            alCambiar={setNombre}
+          />
+        </div>
 
-                    <CampoFormulario
-                        etiqueta="Nombre"
-                        tipo="text"
-                        nombre="nombre"
-                        valor={nombre}
-                        alCambiar={setNombre}
-                    />
+        <div className="col-12 col-md-6">
+          <CampoFormulario
+            etiqueta="Apellidos"
+            tipo="text"
+            nombre="apellidos"
+            valor={apellidos}
+            alCambiar={setApellidos}
+          />
+        </div>
+      </div>
 
-                </div>
+      <CampoFormulario
+        etiqueta="Correo Electrónico"
+        tipo="email"
+        nombre="email"
+        valor={email}
+        alCambiar={setEmail}
+      />
 
-                <div className="col-12 col-md-6">
+      <CampoFormulario
+        etiqueta="Fecha de nacimiento"
+        tipo="date"
+        nombre="fechaNacimiento"
+        valor={fechaNacimiento}
+        alCambiar={setFechaNacimiento}
+      />
 
-                    <CampoFormulario
-                        etiqueta="Apellidos"
-                        tipo="text"
-                        nombre="apellidos"
-                        valor={apellidos}
-                        alCambiar={setApellidos}
-                    />
+      <div className="row">
+        <div className="col-12 col-md-6 mb-3">
+          <label htmlFor="region" className="form-label">
+            Región
+          </label>
 
-                </div>
+          <select
+            id="region"
+            name="region"
+            className="form-select"
+            value={region}
+            onChange={(event) => {
+              setRegion(event.target.value);
 
-            </div>
+              setComuna("");
+            }}
+          >
+            <option value="">Selecciona una región</option>
 
-            <CampoFormulario
-                etiqueta="Correo Electrónico"
-                tipo="email"
-                nombre="email"
-                valor={email}
-                alCambiar={setEmail}
-            />
+            {Object.keys(regionesComunas).map((nombreRegion) => (
+              <option key={nombreRegion} value={nombreRegion}>
+                {nombreRegion}
+              </option>
+            ))}
+          </select>
+        </div>
 
-            <CampoFormulario
-                etiqueta="Fecha de nacimiento"
-                tipo="date"
-                nombre="fechaNacimiento"
-                valor={fechaNacimiento}
-                alCambiar={setFechaNacimiento}
-            />
+        <div className="col-12 col-md-6 mb-3">
+          <label htmlFor="comuna" className="form-label">
+            Comuna
+          </label>
 
-            <div className="row">
+          <select
+            id="comuna"
+            name="comuna"
+            className="form-select"
+            value={comuna}
+            disabled={!region}
+            onChange={(event) => setComuna(event.target.value)}
+          >
+            <option value="">Selecciona una comuna</option>
 
-                <div className="col-12 col-md-6 mb-3">
+            {comunasDisponibles.map((nombreComuna) => (
+              <option key={nombreComuna} value={nombreComuna}>
+                {nombreComuna}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-                    <label
-                        htmlFor="region"
-                        className="form-label"
-                    >
-                        Región
-                    </label>
+      <CampoFormulario
+        etiqueta="Dirección"
+        tipo="text"
+        nombre="direccion"
+        valor={direccion}
+        alCambiar={setDireccion}
+      />
 
-                    <select
-                        id="region"
-                        name="region"
-                        className="form-select"
-                        value={region}
-                        onChange={(event) => {
+      <CampoFormulario
+        etiqueta="Contraseña"
+        tipo="password"
+        nombre="clave"
+        valor={clave}
+        alCambiar={setClave}
+      />
 
-                            setRegion(
-                                event.target.value
-                            );
+      <CampoFormulario
+        etiqueta="Confirmar contraseña"
+        tipo="password"
+        nombre="confirmarClave"
+        valor={confirmarClave}
+        alCambiar={setConfirmarClave}
+      />
 
-                            setComuna("");
-
-                        }}
-                    >
-
-                        <option value="">
-                            Selecciona una región
-                        </option>
-
-                        {Object.keys(
-                            regionesComunas
-                        ).map((nombreRegion) => (
-
-                            <option
-                                key={nombreRegion}
-                                value={nombreRegion}
-                            >
-                                {nombreRegion}
-                            </option>
-
-                        ))}
-
-                    </select>
-
-                </div>
-
-                <div className="col-12 col-md-6 mb-3">
-
-                    <label
-                        htmlFor="comuna"
-                        className="form-label"
-                    >
-                        Comuna
-                    </label>
-
-                    <select
-                        id="comuna"
-                        name="comuna"
-                        className="form-select"
-                        value={comuna}
-                        disabled={!region}
-                        onChange={(event) =>
-                            setComuna(
-                                event.target.value
-                            )
-                        }
-                    >
-
-                        <option value="">
-                            Selecciona una comuna
-                        </option>
-
-                        {comunasDisponibles.map(
-                            (nombreComuna) => (
-
-                                <option
-                                    key={nombreComuna}
-                                    value={nombreComuna}
-                                >
-                                    {nombreComuna}
-                                </option>
-
-                            )
-                        )}
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            <CampoFormulario
-                etiqueta="Dirección"
-                tipo="text"
-                nombre="direccion"
-                valor={direccion}
-                alCambiar={setDireccion}
-            />
-
-            <CampoFormulario
-                etiqueta="Contraseña"
-                tipo="password"
-                nombre="clave"
-                valor={clave}
-                alCambiar={setClave}
-            />
-
-            <CampoFormulario
-                etiqueta="Confirmar contraseña"
-                tipo="password"
-                nombre="confirmarClave"
-                valor={confirmarClave}
-                alCambiar={setConfirmarClave}
-            />
-
-            <div className="d-grid mt-4">
-
-                <button
-                    type="submit"
-                    className="btn btn-primary btn-lg"
-                >
-                    Crear cuenta
-                </button>
-
-            </div>
-
-        </form>
-    );
+      <div className="d-grid mt-4">
+        <button type="submit" className="btn btn-primary btn-lg">
+          Crear cuenta
+        </button>
+      </div>
+    </form>
+  );
 }
 
 export default FormularioRegistro;
