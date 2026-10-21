@@ -28,6 +28,7 @@ function Navbar() {
     "Estudio y Grabación",
   ];
 
+
   useEffect(() => {
     const actualizarSesion = () => {
       setSesionIniciada(obtenerSesion());

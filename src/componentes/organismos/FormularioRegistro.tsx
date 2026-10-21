@@ -1,4 +1,5 @@
-// src/componentes/organismos/FormularioRegistro.tsx
+//src/componentes/organismos/FormularioRegistro.tsx
+
 
 import { useState } from "react";
 import type { FormEvent } from "react";

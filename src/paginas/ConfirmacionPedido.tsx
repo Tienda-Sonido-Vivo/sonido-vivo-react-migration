@@ -73,3 +73,4 @@ function ConfirmacionPedido({ pedidos }: ConfirmacionPedidoProps) {
 }
 
 export default ConfirmacionPedido;
+

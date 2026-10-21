@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import FormularioCheckout from "../componentes/organismos/FormularioCheckout";
 import type { DatosFormularioCheckout } from "../componentes/organismos/FormularioCheckout";
 
+
 import ResumenCompra from "../componentes/moleculas/ResumenCompra";
 
 import type { Producto } from "../interfaces/Producto";

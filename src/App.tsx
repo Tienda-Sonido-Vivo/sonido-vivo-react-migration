@@ -3,6 +3,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./componentes/organismos/Navbar";
+
 import Footer from "./componentes/organismos/Footer";
 
 // Páginas Públicas
@@ -24,8 +25,8 @@ import InicioAdmin from "./paginas/admin/InicioAdmin";
 import GestionUsuarios from "./paginas/admin/GestionUsuarios";
 import GestionProductos from "./paginas/admin/GestionProductos";
 import GestionPedidos from "./paginas/admin/GestionPedidos";
-
 import { useAppData } from "./hooks/useAppData";
+
 
 function App() {
   /*
@@ -188,5 +189,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

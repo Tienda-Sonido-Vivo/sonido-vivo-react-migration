@@ -31,4 +31,5 @@ export interface Pedido {
   metodoPago: "debito" | "credito" | "transbank" | "klap";
   cliente: DatosClientePedido;
   correoCliente: string;
+
 }

@@ -44,3 +44,4 @@ function Registro({ usuarios, onRegistrarUsuario }: RegistroProps) {
 }
 
 export default Registro;
+
