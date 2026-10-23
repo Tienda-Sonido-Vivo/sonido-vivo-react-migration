@@ -1,4 +1,4 @@
-import { FormularioContacto } from '../componentes/moleculas/CampoFormulario'
+import FormularioContacto from "../componentes/organismos/FormularioContacto";
 
 interface Props {
   conBorde?: boolean

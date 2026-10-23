@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { FormularioPregunta } from "../componentes/moleculas/CampoFormulario";
-
+import FormularioPreguntasFrecuentes from "../componentes/organismos/FormularioPreguntasFrecuentes";
 
 type Pregunta = {
     pregunta: string;
@@ -163,7 +162,7 @@ function PreguntasFrecuentes() {
                         </p>
 
 
-                        <FormularioPregunta />
+                        <FormularioPreguntasFrecuentes />
 
                     </div>
 

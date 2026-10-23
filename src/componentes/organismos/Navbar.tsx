@@ -223,7 +223,6 @@ function Navbar() {
               </li>
             </ul>
 
-            <Buscador />
           </div>
         </div>
       </nav>

@@ -141,6 +141,31 @@ function App() {
           }
         />
 
+        <Route
+          path="/nosotros"
+          element={<Nosotros />}
+        />
+
+        <Route
+          path="/contacto"
+          element={<Contacto />}
+        />
+
+        <Route
+          path="/novedades"
+            element={<Novedades />}
+        />
+
+        <Route
+          path="/novedades/:slug"
+          element={<NovedadDetalle />}
+        />
+                
+        <Route
+          path="/preguntas-frecuentes"
+          element={<PreguntasFrecuentes />}
+        />
+
         {/*
          * PANEL DE ADMINISTRACIÓN
          * Protegido por roles y envuelto en LayoutAdmin
