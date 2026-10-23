@@ -28,6 +28,12 @@ import GestionPedidos from "./paginas/admin/GestionPedidos";
 import { useAppData } from "./hooks/useAppData";
 
 
+import Nosotros from "./paginas/Nosotros";
+import Contacto from "./paginas/Contacto";
+import Novedades from "./paginas/Novedades";
+import NovedadDetalle from "./paginas/NovedadDetalle";
+import PreguntasFrecuentes from "./paginas/PreguntasFrecuentes";
+
 function App() {
   /*
    * ADMIN: en las rutas /admin no se muestran el Navbar ni el Footer públicos.
