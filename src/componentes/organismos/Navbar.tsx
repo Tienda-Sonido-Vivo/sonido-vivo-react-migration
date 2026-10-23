@@ -153,6 +153,14 @@ function Navbar() {
                       Contáctanos
                     </Link>
                   </li>
+
+                  <li>
+
+                    <Link className="dropdown-item" to="/preguntas-frecuentes">
+                        Preguntas Frecuentes
+                    </Link>
+
+                  </li>
                 </ul>
               </li>
 
