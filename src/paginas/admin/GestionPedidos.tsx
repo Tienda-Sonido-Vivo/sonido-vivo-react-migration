@@ -1,4 +1,3 @@
-// src/paginas/admin/GestionPedidos.tsx
 
 import { Fragment, useCallback, useMemo, useState } from "react";
 
@@ -25,7 +24,6 @@ const TEXTO_PAGO: Record<Pedido["metodoPago"], string> = {
   klap: "Klap",
 };
 
-// Los pedidos viven en el estado de App.tsx (los crea el checkout)
 interface GestionPedidosProps {
   pedidos: Pedido[];
 
@@ -41,7 +39,6 @@ function GestionPedidos({ pedidos, onCambiarPedidos }: GestionPedidosProps) {
 
   const [mensaje, setMensaje] = useState("");
 
-  // Los más recientes primero (se guardan en orden de llegada)
   const filtrados = useMemo(
     () =>
       pedidos

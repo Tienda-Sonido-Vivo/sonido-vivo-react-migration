@@ -1,4 +1,3 @@
-// src/componentes/moleculas/ThOrdenable.tsx
 
 interface ThOrdenableProps {
   etiqueta: string;
@@ -12,7 +11,6 @@ interface ThOrdenableProps {
   className?: string;
 }
 
-// Encabezado de tabla que se puede clickear para ordenar
 function ThOrdenable({
   etiqueta,
   activo,

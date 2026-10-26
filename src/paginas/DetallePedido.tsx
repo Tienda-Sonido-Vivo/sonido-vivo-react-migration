@@ -1,4 +1,3 @@
-//src/paginas/DetallePedido.tsx
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import type { Pedido } from "../interfaces/Pedido";

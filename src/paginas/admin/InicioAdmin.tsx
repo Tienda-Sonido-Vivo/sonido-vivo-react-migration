@@ -1,4 +1,3 @@
-// src/paginas/admin/InicioAdmin.tsx
 
 import { Link } from "react-router-dom";
 

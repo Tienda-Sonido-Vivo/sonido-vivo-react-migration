@@ -1,4 +1,3 @@
-// src/componentes/atomos/TituloSeccion.tsx
 
 interface TituloSeccionProps {
   children: string;

@@ -1,4 +1,3 @@
-// src/datos/usuarios.ts
 
 import type { Usuario } from "../interfaces/Usuario";
 

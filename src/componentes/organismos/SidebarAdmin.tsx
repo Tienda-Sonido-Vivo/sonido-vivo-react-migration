@@ -1,4 +1,3 @@
-// src/componentes/organismos/SidebarAdmin.tsx
 
 import { Link, NavLink, useNavigate } from "react-router-dom";
 

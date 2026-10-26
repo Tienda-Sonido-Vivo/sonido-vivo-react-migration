@@ -1,4 +1,3 @@
-// src/componentes/organismos/ModalProducto.tsx
 
 import { useState } from "react";
 

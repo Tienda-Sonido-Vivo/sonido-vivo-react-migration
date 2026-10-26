@@ -1,4 +1,3 @@
-//src/paginas/ConfirmacionPedido.tsx
 
 import { Link, useParams } from "react-router-dom";
 

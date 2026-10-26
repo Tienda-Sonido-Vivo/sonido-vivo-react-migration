@@ -1,4 +1,3 @@
-// src/datos/categorias.ts
 
 export const categorias: string[] = [
   "Guitarras Acústicas",

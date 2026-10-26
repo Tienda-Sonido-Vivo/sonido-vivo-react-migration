@@ -1,6 +1,3 @@
-// src/utilidades/run.ts
-
-// Calcula el dígito verificador (módulo 11) del cuerpo del RUN
 export function calcularDigitoVerificador(cuerpo: string): string {
   let suma = 0;
   let multiplicador = 2;
@@ -19,7 +16,6 @@ export function calcularDigitoVerificador(cuerpo: string): string {
   return String(resto);
 }
 
-// Valida un RUN escrito como 12345678-5 (sin puntos, con guion)
 export function validarRun(run: string): boolean {
   if (!/^\d{7,8}-[\dkK]$/.test(run)) {
     return false;
@@ -30,12 +26,10 @@ export function validarRun(run: string): boolean {
   return calcularDigitoVerificador(cuerpo) === dv.toUpperCase();
 }
 
-// "12345678-5" -> "123456785" (forma en que se guarda, igual que datos/usuarios.ts)
 export function normalizarRun(run: string): string {
   return run.replace(/[.\-\s]/g, "").toUpperCase();
 }
 
-// "123456785" -> "12345678-5" (forma en que se muestra y se escribe)
 export function formatearRun(run: string): string {
   const limpio = normalizarRun(run);
 

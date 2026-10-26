@@ -1,4 +1,3 @@
-// src/paginas/Login.tsx
 
 import { Link } from "react-router-dom";
 

@@ -1,4 +1,3 @@
-// src/paginas/admin/GestionProductos.tsx
 
 import { useCallback, useMemo, useState } from "react";
 
@@ -15,11 +14,9 @@ import ModalProducto from "../../componentes/organismos/ModalProducto";
 const TOTAL_COLUMNAS = 9;
 
 interface EstadoModal {
-  // null = crear un producto nuevo
   producto: Producto | null;
 }
 
-// Los productos viven en el estado de App.tsx (el checkout descuenta el stock ahí)
 interface GestionProductosProps {
   productos: Producto[];
 
@@ -30,7 +27,6 @@ function GestionProductos({
   productos,
   onCambiarProductos,
 }: GestionProductosProps) {
-  // El Administrador gestiona todo el catálogo; el Vendedor solo el stock
   const esAdministrador = obtenerRol() === "Administrador";
 
   const [modal, setModal] = useState<EstadoModal | null>(null);

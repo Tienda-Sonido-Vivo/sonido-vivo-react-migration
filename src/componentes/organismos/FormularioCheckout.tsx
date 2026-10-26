@@ -1,4 +1,3 @@
-//src/componentes/organismos/FormularioCheckout.tsx
 
 import { useState } from "react";
 import type { FormEvent } from "react";
@@ -122,7 +121,7 @@ function FormularioCheckout({
       !region ||
       !comuna
     ) {
-      return "Debe completar todos los datos obligatorios.";
+      return "Debe completar todos los datos obligatorios: Nombre, Apellidos, telefono, region, comuna";
     }
 
     if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/.test(nombre.trim())) {
@@ -136,13 +135,13 @@ function FormularioCheckout({
     const formatoTelefono = /^(?:\+?56\s?)?9\s?\d{4}\s?\d{4}$/;
 
     if (!formatoTelefono.test(telefono.trim())) {
-      return "Ingresa un celular chileno válido.";
+      return "Ingresa un celular chileno válido: 56912345678 o 912345678";
     }
 
     const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formatoCorreo.test(correo.trim())) {
-      return "Ingresa un correo electrónico válido.";
+      return "Ingresa un correo electrónico válido: usuario@ejemplo.com";
     }
 
     if (metodoEntrega === "despacho") {
@@ -182,8 +181,8 @@ function FormularioCheckout({
         return "Ingresa un RUT válido.";
       }
 
-      if (numeroDocumento.trim().length < 5) {
-        return "Ingresa un número de documento válido.";
+      if (numeroDocumento.trim().length != 8) {
+        return "Ingresa un número de documento válido: 8 caracteres";
       }
     }
 
@@ -246,7 +245,6 @@ function FormularioCheckout({
 
   return (
     <form onSubmit={manejarEnvio} noValidate>
-      {/* DATOS DEL CLIENTE */}
 
       <div className="card shadow-sm border-0 mb-4">
         <div className="card-header bg-primary text-white">
@@ -265,7 +263,7 @@ function FormularioCheckout({
           <div className="row">
             <div className="col-12 col-md-6">
               <CampoFormulario
-                etiqueta="Nombre"
+                etiqueta="Nombre *"
                 tipo="text"
                 nombre="nombre"
                 valor={nombre}
@@ -275,7 +273,7 @@ function FormularioCheckout({
 
             <div className="col-12 col-md-6">
               <CampoFormulario
-                etiqueta="Apellidos"
+                etiqueta="Apellidos *"
                 tipo="text"
                 nombre="apellidos"
                 valor={apellidos}
@@ -285,7 +283,7 @@ function FormularioCheckout({
 
             <div className="col-12 col-md-6">
               <CampoFormulario
-                etiqueta="Teléfono"
+                etiqueta="Teléfono *"
                 tipo="tel"
                 nombre="telefono"
                 valor={telefono}
@@ -295,7 +293,7 @@ function FormularioCheckout({
 
             <div className="col-12 col-md-6">
               <CampoFormulario
-                etiqueta="Correo electrónico"
+                etiqueta="Correo electrónico *"
                 tipo="email"
                 nombre="correo"
                 valor={correo}
@@ -306,8 +304,6 @@ function FormularioCheckout({
         </div>
       </div>
 
-      {/* DIRECCIÓN */}
-
       <div className="card shadow-sm border-0 mb-4">
         <div className="card-header bg-primary text-white">
           <h2 className="h5 mb-0">2. Dirección de entrega</h2>
@@ -317,7 +313,7 @@ function FormularioCheckout({
           <div className="row">
             <div className="col-12 col-md-6 mb-3">
               <label htmlFor="region" className="form-label fw-semibold">
-                Región
+                Región *
               </label>
 
               <select
@@ -342,7 +338,7 @@ function FormularioCheckout({
 
             <div className="col-12 col-md-6 mb-3">
               <label htmlFor="comuna" className="form-label fw-semibold">
-                Comuna
+                Comuna *
               </label>
 
               <select
@@ -364,7 +360,7 @@ function FormularioCheckout({
 
             <div className="col-12">
               <CampoFormulario
-                etiqueta="Dirección"
+                etiqueta="Dirección *"
                 tipo="text"
                 nombre="direccion"
                 valor={direccion}
@@ -374,7 +370,7 @@ function FormularioCheckout({
 
             <div className="col-12 col-md-6">
               <CampoFormulario
-                etiqueta="Número de vivienda"
+                etiqueta="Número de vivienda *"
                 tipo="text"
                 nombre="numeroVivienda"
                 valor={numeroVivienda}
@@ -395,7 +391,6 @@ function FormularioCheckout({
         </div>
       </div>
 
-      {/* ENTREGA */}
 
       <div className="card shadow-sm border-0 mb-4">
         <div className="card-header bg-primary text-white">
@@ -441,7 +436,6 @@ function FormularioCheckout({
         </div>
       </div>
 
-      {/* PAGO */}
 
       <div className="card shadow-sm border-0 mb-4">
         <div className="card-header bg-primary text-white">
@@ -451,7 +445,7 @@ function FormularioCheckout({
         <div className="card-body p-4">
           <div className="mb-3">
             <label htmlFor="metodoPago" className="form-label fw-semibold">
-              Medio de pago
+              Medio de pago *
             </label>
 
             <select
@@ -476,7 +470,7 @@ function FormularioCheckout({
             <div className="row">
               <div className="col-12">
                 <CampoFormulario
-                  etiqueta="Número de tarjeta"
+                  etiqueta="Número de tarjeta *"
                   tipo="text"
                   nombre="numeroTarjeta"
                   valor={numeroTarjeta}
@@ -486,7 +480,7 @@ function FormularioCheckout({
 
               <div className="col-12 col-md-4">
                 <CampoFormulario
-                  etiqueta="Vencimiento MM/AA"
+                  etiqueta="Vencimiento MM/AA *"
                   tipo="text"
                   nombre="fechaVencimiento"
                   valor={fechaVencimiento}
@@ -496,7 +490,7 @@ function FormularioCheckout({
 
               <div className="col-12 col-md-4">
                 <CampoFormulario
-                  etiqueta="CVV"
+                  etiqueta="CVV *"
                   tipo="password"
                   nombre="codigoSeguridad"
                   valor={codigoSeguridad}
@@ -508,7 +502,7 @@ function FormularioCheckout({
 
               <div className="col-12 col-md-4">
                 <CampoFormulario
-                  etiqueta="Nombre del titular"
+                  etiqueta="Nombre del titular *"
                   tipo="text"
                   nombre="nombreTitular"
                   valor={nombreTitular}
@@ -518,7 +512,7 @@ function FormularioCheckout({
 
               <div className="col-12 col-md-6">
                 <CampoFormulario
-                  etiqueta="RUT del pago"
+                  etiqueta="RUT del pago *"
                   tipo="text"
                   nombre="rutPago"
                   valor={rutPago}
@@ -528,7 +522,7 @@ function FormularioCheckout({
 
               <div className="col-12 col-md-6">
                 <CampoFormulario
-                  etiqueta="Número de documento"
+                  etiqueta="Número de documento *"
                   tipo="text"
                   nombre="numeroDocumento"
                   valor={numeroDocumento}

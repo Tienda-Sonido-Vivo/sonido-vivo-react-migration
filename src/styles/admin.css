@@ -1,6 +1,3 @@
-/* src/estilos/admin.css */
-
-/* Todas las clases empiezan con "admin-" para no chocar con el sitio público */
 
 .admin-body {
   flex: 1;
@@ -26,7 +23,7 @@
 }
 
 .admin-contenido {
-  min-width: 0; /* permite que las tablas hagan scroll dentro de .table-responsive */
+  min-width: 0;
 }
 
 @media (min-width: 768px) {

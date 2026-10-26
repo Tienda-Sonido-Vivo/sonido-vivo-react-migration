@@ -1,4 +1,3 @@
-// src/componentes/moleculas/Buscador.tsx
 
 function Buscador() {
   return (

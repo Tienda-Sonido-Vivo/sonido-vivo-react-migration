@@ -5,7 +5,7 @@ type Props = {
   tipo: string;
   nombre: string;
   valor: string;
-  alCambiar: (valor: string) => void; // Recibe la función que actualiza el valor
+  alCambiar: (valor: string) => void; 
 };
 
 function CampoFormulario({ etiqueta, tipo, nombre, valor, alCambiar }: Props) {

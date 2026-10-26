@@ -1,4 +1,3 @@
-// src/paginas/Catalogo.tsx
 
 import { useSearchParams } from "react-router-dom";
 

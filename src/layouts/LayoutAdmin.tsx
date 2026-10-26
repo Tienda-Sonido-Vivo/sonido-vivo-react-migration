@@ -1,4 +1,3 @@
-// src/layouts/LayoutAdmin.tsx
 
 import { Outlet } from "react-router-dom";
 
@@ -9,7 +8,6 @@ import "../estilos/admin.css";
 function LayoutAdmin() {
   return (
     <div className="admin-body">
-      {/* Barra superior: solo celular */}
       <div className="admin-topbar d-md-none d-flex justify-content-between align-items-center p-3">
         <span className="fw-bold text-white">
           Sonido <span className="admin-acento">Vivo</span>
@@ -29,7 +27,6 @@ function LayoutAdmin() {
       </div>
 
       <div className="admin-layout">
-        {/* Celular: se despliega con el botón. Tablet/escritorio: siempre visible */}
         <aside
           id="sidebarAdmin"
           className="admin-sidebar collapse d-md-block text-white p-3"

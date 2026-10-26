@@ -1,4 +1,3 @@
-// src/App.tsx
 
 import { Routes, Route, useLocation } from "react-router-dom";
 
@@ -6,7 +5,6 @@ import Navbar from "./componentes/organismos/Navbar";
 
 import Footer from "./componentes/organismos/Footer";
 
-// Páginas Públicas
 import Inicio from "./paginas/Inicio";
 import Catalogo from "./paginas/Catalogo";
 import DetalleProducto from "./paginas/DetalleProducto";
@@ -18,7 +16,6 @@ import ConfirmacionPedido from "./paginas/ConfirmacionPedido";
 import MisPedidos from "./paginas/MisPedidos";
 import DetallePedido from "./paginas/DetallePedido";
 
-// Páginas y Componentes de Administración
 import LayoutAdmin from "./layouts/LayoutAdmin";
 import RutaProtegida from "./rutas/RutaProtegida";
 import InicioAdmin from "./paginas/admin/InicioAdmin";
@@ -35,15 +32,11 @@ import NovedadDetalle from "./paginas/NovedadDetalle";
 import PreguntasFrecuentes from "./paginas/PreguntasFrecuentes";
 
 function App() {
-  /*
-   * ADMIN: en las rutas /admin no se muestran el Navbar ni el Footer públicos.
-   */
+
   const { pathname } = useLocation();
   const esRutaAdmin = pathname.startsWith("/admin");
 
-  /*
-   * Toda la lógica de estado se consume desde el hook useAppData
-   */
+
   const {
     usuarios,
     carrito,
@@ -66,7 +59,6 @@ function App() {
       {!esRutaAdmin && <Navbar />}
 
       <Routes>
-        {/* Rutas Públicas */}
         <Route path="/" element={<Inicio />} />
 
         <Route path="/catalogo" element={<Catalogo />} />
@@ -166,10 +158,7 @@ function App() {
           element={<PreguntasFrecuentes />}
         />
 
-        {/*
-         * PANEL DE ADMINISTRACIÓN
-         * Protegido por roles y envuelto en LayoutAdmin
-         */}
+
         <Route
           element={
             <RutaProtegida rolesPermitidos={["Administrador", "Vendedor"]} />
@@ -198,7 +187,6 @@ function App() {
               }
             />
 
-            {/* Solo el Administrador puede gestionar usuarios */}
             <Route
               element={<RutaProtegida rolesPermitidos={["Administrador"]} />}
             >

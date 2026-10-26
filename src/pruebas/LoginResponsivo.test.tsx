@@ -31,7 +31,6 @@ test("la página Login contiene las clases responsive de Bootstrap", () => {
 
   const onIniciarSesion = vi.fn();
 
-  // Renderizamos la página Login.
   render(
     <MemoryRouter>
       <Login
@@ -41,17 +40,14 @@ test("la página Login contiene las clases responsive de Bootstrap", () => {
     </MemoryRouter>
   );
 
-  // Buscamos el título para localizar la columna que lo contiene.
   const titulo = screen.getByRole("heading", {
     name: "Iniciar Sesión",
   });
 
   const columna = titulo.closest(".col-12");
 
-  // Comprobamos que encontramos la columna.
   expect(columna).not.toBeNull();
 
-  // Comprobamos que contiene las clases responsive esperadas.
   expect(columna?.classList.contains("col-12")).toBe(true);
   expect(columna?.classList.contains("col-md-6")).toBe(true);
   expect(columna?.classList.contains("col-lg-5")).toBe(true);

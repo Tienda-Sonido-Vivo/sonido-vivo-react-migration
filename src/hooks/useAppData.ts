@@ -1,4 +1,3 @@
-// src/hooks/useAppData.ts
 
 import { useEffect, useState } from "react";
 
@@ -13,34 +12,23 @@ import type { Usuario } from "../interfaces/Usuario";
 import type { DatosFormularioCheckout } from "../componentes/organismos/FormularioCheckout";
 
 export function useAppData() {
-  /*
-   * USUARIOS: viven en el estado React.
-   */
+
   const [usuarios, setUsuarios] = useState<Usuario[]>(usuariosIniciales);
 
-  /*
-   * CARRITO: vive en React.
-   */
+
   const [carrito, setCarrito] = useState<ItemCarrito[]>([]);
 
-  /*
-   * PEDIDOS: vive en React e inicializa desde localStorage para el Admin.
-   */
+
   const [pedidos, setPedidos] = useState<Pedido[]>(() => obtenerPedidos());
 
-  // Sincronizar pedidos con localStorage cuando cambien
   useEffect(() => {
     guardarPedidos(pedidos);
   }, [pedidos]);
 
-  /*
-   * PRODUCTOS: permite actualizar el stock después de una compra o desde el Admin.
-   */
+
   const [productosDisponibles, setProductosDisponibles] = useState<Producto[]>(productos);
 
-  /*
-   * SESIÓN ACTUAL (sessionStorage)
-   */
+
   const [correoUsuario, setCorreoUsuario] = useState(
     sessionStorage.getItem("correoUsuario") ?? ""
   );
@@ -57,23 +45,17 @@ export function useAppData() {
     };
   }, []);
 
-  /*
-   * LOGIN
-   */
+
   const iniciarSesion = (usuario: Usuario) => {
     setCorreoUsuario(usuario.email);
   };
 
-  /*
-   * REGISTRO
-   */
+
   const registrarUsuario = (nuevoUsuario: Usuario) => {
     setUsuarios((anteriores) => [...anteriores, nuevoUsuario]);
   };
 
-  /*
-   * AGREGAR AL CARRITO
-   */
+
   const agregarAlCarrito = (codigo: string, cantidad: number) => {
     const producto = productosDisponibles.find((actual) => actual.codigo === codigo);
 
@@ -106,9 +88,7 @@ export function useAppData() {
     });
   };
 
-  /*
-   * CAMBIAR CANTIDAD
-   */
+
   const cambiarCantidad = (codigo: string, cantidad: number) => {
     const producto = productosDisponibles.find((actual) => actual.codigo === codigo);
 
@@ -125,16 +105,12 @@ export function useAppData() {
     );
   };
 
-  /*
-   * ELIMINAR DEL CARRITO
-   */
+
   const eliminarDelCarrito = (codigo: string) => {
     setCarrito((actual) => actual.filter((item) => item.codigo !== codigo));
   };
 
-  /*
-   * CREAR PEDIDO
-   */
+
   const confirmarPedido = (datos: DatosFormularioCheckout): string | null => {
     if (!correoUsuario || carrito.length === 0) {
       return null;
@@ -238,7 +214,6 @@ export function useAppData() {
     cambiarCantidad,
     eliminarDelCarrito,
     confirmarPedido,
-    // Métodos para actualizar los estados desde la zona Admin:
     setUsuarios,
     setProductosDisponibles,
     setPedidos,

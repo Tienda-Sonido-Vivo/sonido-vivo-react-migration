@@ -1,4 +1,3 @@
-// src/hooks/useOrdenamiento.ts
 
 import { useMemo, useState } from "react";
 
@@ -8,7 +7,6 @@ interface Orden<T> {
   ascendente: boolean;
 }
 
-// Ordena un arreglo por cualquier campo sin modificar el original
 export function useOrdenamiento<T>(datos: T[]) {
   const [orden, setOrden] = useState<Orden<T> | null>(null);
 
@@ -40,7 +38,6 @@ export function useOrdenamiento<T>(datos: T[]) {
     return copia;
   }, [datos, orden]);
 
-  // Primer clic: ascendente. Segundo clic en la misma columna: descendente.
   const alternarOrden = (campo: keyof T) => {
     setOrden((anterior) => {
       if (anterior !== null && anterior.campo === campo) {

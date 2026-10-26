@@ -1,4 +1,3 @@
-// src/componentes/organismos/ModalPedido.tsx
 
 import { useState } from "react";
 
@@ -26,7 +25,6 @@ function ModalPedido({ pedido, onGuardar, onCerrar }: ModalPedidoProps) {
     esEstadoPedido(pedido.estado) ? pedido.estado : ESTADOS_PEDIDO[0],
   );
 
-  // Un pedido solo puede avanzar: confirmado -> preparación -> despachado -> entregado
   const opciones = estadosPermitidos(pedido.estado);
 
   const estaEntregado = pedido.estado === "Entregado";

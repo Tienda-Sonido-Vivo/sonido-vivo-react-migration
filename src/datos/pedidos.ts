@@ -1,8 +1,6 @@
-// src/datos/pedidos.ts
 
 import type { Pedido } from "../interfaces/Pedido";
 
-// Pedidos de ejemplo para probar la zona de gestión de pedidos en el panel de administración
 export const pedidosIniciales: Pedido[] = [
   {
     codigo: "PED-000001",

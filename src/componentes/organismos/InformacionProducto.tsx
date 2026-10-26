@@ -1,4 +1,3 @@
-// src/componentes/organismos/InformacionProducto.tsx
 
 import type { Producto } from "../../interfaces/Producto";
 import SelectorCantidad from "../moleculas/SelectorCantidad";

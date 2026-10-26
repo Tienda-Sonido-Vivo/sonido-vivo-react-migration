@@ -1,10 +1,8 @@
-// src/componentes/organismos/Navbar.tsx
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import Logo from "../atomos/Logo";
-import Buscador from "../moleculas/Buscador";
 
 function obtenerSesion() {
   return sessionStorage.getItem("usuarioLogueado") === "true";

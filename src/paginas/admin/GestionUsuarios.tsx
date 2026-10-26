@@ -1,4 +1,3 @@
-// src/paginas/admin/GestionUsuarios.tsx
 
 import { Fragment, useCallback, useState } from "react";
 
@@ -11,15 +10,12 @@ import { formatearRun } from "../../utilidades/run";
 import ThOrdenable from "../../componentes/moleculas/ThOrdenable";
 import ModalUsuario from "../../componentes/organismos/ModalUsuario";
 
-// Cantidad de columnas de la tabla (para el colSpan de la fila de detalle)
 const TOTAL_COLUMNAS = 12;
 
 interface EstadoModal {
-  // null = crear un usuario nuevo
   usuario: Usuario | null;
 }
 
-// Los usuarios viven en el estado de App.tsx (los comparte con Login y Registro)
 interface GestionUsuariosProps {
   usuarios: Usuario[];
 
@@ -40,12 +36,10 @@ function GestionUsuarios({
 
   const cerrarModal = useCallback(() => setModal(null), []);
 
-  // Toda modificación pasa por aquí y actualiza el estado compartido de App
   const actualizarUsuarios = (nuevos: Usuario[]) => {
     onCambiarUsuarios(nuevos);
   };
 
-  // Una cuenta no puede desactivarse a sí misma
   const correoActual = obtenerCorreo().toLowerCase();
 
   const esCuentaPropia = (usuario: Usuario) =>
@@ -265,7 +259,6 @@ function GestionUsuarios({
                 {detalleAbierto === usuario.run && (
                   <tr>
                     <td colSpan={TOTAL_COLUMNAS}>
-                      {/* Estos datos ya están en la tabla en pantallas grandes */}
                       <dl className="row mb-3 d-xl-none">
                         <dt className="col-5 col-md-3">Fecha de nacimiento</dt>
                         <dd className="col-7 col-md-9">

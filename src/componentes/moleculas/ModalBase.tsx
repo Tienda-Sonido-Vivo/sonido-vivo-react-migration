@@ -1,4 +1,3 @@
-// src/componentes/moleculas/ModalBase.tsx
 
 import { useEffect } from "react";
 import type { ReactNode } from "react";
@@ -13,7 +12,6 @@ interface ModalBaseProps {
   children: ReactNode;
 }
 
-// Modal de Bootstrap controlado por React (se muestra al renderizarlo)
 function ModalBase({ titulo, onCerrar, pie, children }: ModalBaseProps) {
   useEffect(() => {
     const overflowAnterior = document.body.style.overflow;

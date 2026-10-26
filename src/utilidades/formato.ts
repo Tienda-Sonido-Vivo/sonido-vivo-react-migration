@@ -1,4 +1,3 @@
-// src/utilidades/formato.ts
 
 export function formatearMoneda(valor: number): string {
   return new Intl.NumberFormat("es-CL", {

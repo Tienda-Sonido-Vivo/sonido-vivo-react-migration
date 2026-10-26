@@ -1,4 +1,3 @@
-// src/servicios/pedidosServicio.ts
 
 import type { Pedido } from "../interfaces/Pedido";
 import { pedidosIniciales } from "../datos/pedidos";
@@ -12,7 +11,6 @@ export function obtenerPedidos(): Pedido[] {
     try {
       return JSON.parse(guardado) as Pedido[];
     } catch {
-      // Dato corrupto: se parte de los datos iniciales
     }
   }
 

@@ -1,4 +1,3 @@
-// src/componentes/organismos/FormularioLogin.tsx
 
 import { useState } from "react";
 import type { FormEvent } from "react";

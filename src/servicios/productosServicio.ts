@@ -1,4 +1,3 @@
-// src/servicios/productosServicio.ts
 
 import type { Producto } from "../interfaces/Producto";
 import { productos as productosIniciales } from "../datos/productos";
@@ -12,7 +11,6 @@ export function obtenerProductos(): Producto[] {
     try {
       return JSON.parse(guardado) as Producto[];
     } catch {
-      // Dato corrupto: se parte de los datos iniciales
     }
   }
 

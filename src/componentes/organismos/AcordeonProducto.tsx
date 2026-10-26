@@ -19,7 +19,6 @@ function AcordeonProducto({ producto }: AcordeonProductoProps) {
   return (
     <div className="mt-5">
       <div className="accordion" id="productInformation">
-        {/* DESCRIPCIÓN */}
 
         <div className="accordion-item">
           <h2 className="accordion-header">
@@ -43,7 +42,6 @@ function AcordeonProducto({ producto }: AcordeonProductoProps) {
           )}
         </div>
 
-        {/* ESPECIFICACIONES */}
 
         <div className="accordion-item">
           <h2 className="accordion-header">
@@ -91,7 +89,6 @@ function AcordeonProducto({ producto }: AcordeonProductoProps) {
           )}
         </div>
 
-        {/* DESPACHO */}
 
         <div className="accordion-item">
           <h2 className="accordion-header">

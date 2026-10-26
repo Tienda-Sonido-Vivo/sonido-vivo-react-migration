@@ -1,12 +1,10 @@
-// src/servicios/usuariosServicio.ts
 
 import type { Usuario } from "../interfaces/Usuario";
 import { usuarios as usuariosIniciales } from "../datos/usuarios";
 
 const CLAVE_STORAGE = "usuarios";
 
-// Hoy lee de localStorage. Cuando exista el microservicio,
-// solo cambian estas funciones por fetch("/api/usuarios").
+
 export function obtenerUsuarios(): Usuario[] {
   const guardado = localStorage.getItem(CLAVE_STORAGE);
 
@@ -14,7 +12,6 @@ export function obtenerUsuarios(): Usuario[] {
     try {
       return JSON.parse(guardado) as Usuario[];
     } catch {
-      // Si el dato guardado está corrupto, se parte de los datos iniciales
     }
   }
 

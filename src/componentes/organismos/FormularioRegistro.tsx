@@ -1,4 +1,3 @@
-//src/componentes/organismos/FormularioRegistro.tsx
 
 
 import { useState } from "react";
@@ -53,7 +52,7 @@ function FormularioRegistro({
       !clave ||
       !confirmarClave
     ) {
-      alert("Debe completar todos los campos obligatorios.");
+      alert("Debe completar todos los campos obligatorios: rut, nombre, apellidos, email, region, comuna, direccion, contraseña, confirmar contraseña");
       return;
     }
 
@@ -136,7 +135,7 @@ function FormularioRegistro({
   return (
     <form onSubmit={manejarEnvio} noValidate>
       <CampoFormulario
-        etiqueta="RUN"
+        etiqueta="RUT *"
         tipo="text"
         nombre="run"
         valor={run}
@@ -146,7 +145,7 @@ function FormularioRegistro({
       <div className="row">
         <div className="col-12 col-md-6">
           <CampoFormulario
-            etiqueta="Nombre"
+            etiqueta="Nombre *"
             tipo="text"
             nombre="nombre"
             valor={nombre}
@@ -156,7 +155,7 @@ function FormularioRegistro({
 
         <div className="col-12 col-md-6">
           <CampoFormulario
-            etiqueta="Apellidos"
+            etiqueta="Apellidos *"
             tipo="text"
             nombre="apellidos"
             valor={apellidos}
@@ -166,7 +165,7 @@ function FormularioRegistro({
       </div>
 
       <CampoFormulario
-        etiqueta="Correo Electrónico"
+        etiqueta="Correo Electrónico *"
         tipo="email"
         nombre="email"
         valor={email}
@@ -184,7 +183,7 @@ function FormularioRegistro({
       <div className="row">
         <div className="col-12 col-md-6 mb-3">
           <label htmlFor="region" className="form-label">
-            Región
+            Región *
           </label>
 
           <select
@@ -209,7 +208,7 @@ function FormularioRegistro({
 
         <div className="col-12 col-md-6 mb-3">
           <label htmlFor="comuna" className="form-label">
-            Comuna
+            Comuna *
           </label>
 
           <select
@@ -232,7 +231,7 @@ function FormularioRegistro({
       </div>
 
       <CampoFormulario
-        etiqueta="Dirección"
+        etiqueta="Dirección *"
         tipo="text"
         nombre="direccion"
         valor={direccion}
@@ -240,7 +239,7 @@ function FormularioRegistro({
       />
 
       <CampoFormulario
-        etiqueta="Contraseña"
+        etiqueta="Contraseña *"
         tipo="password"
         nombre="clave"
         valor={clave}
@@ -248,7 +247,7 @@ function FormularioRegistro({
       />
 
       <CampoFormulario
-        etiqueta="Confirmar contraseña"
+        etiqueta="Confirmar contraseña *"
         tipo="password"
         nombre="confirmarClave"
         valor={confirmarClave}

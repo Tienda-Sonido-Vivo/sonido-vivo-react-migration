@@ -1,4 +1,3 @@
-// src/paginas/Registro.tsx
 
 import { Link } from "react-router-dom";
 

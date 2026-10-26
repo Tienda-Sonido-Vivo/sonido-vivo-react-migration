@@ -1,4 +1,3 @@
-// src/paginas/Carrito.tsx
 import { Link, useNavigate } from "react-router-dom";
 import type { Producto } from "../interfaces/Producto";
 import type { ItemCarrito } from "../interfaces/ItemCarrito";

@@ -1,4 +1,3 @@
-// src/layouts/LayoutPublico.tsx
 
 import { Outlet } from "react-router-dom";
 

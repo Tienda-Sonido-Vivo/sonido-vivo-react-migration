@@ -52,9 +52,6 @@ test("FormularioLogin muestra un mensaje de error cuando el correo es inválido"
     </MemoryRouter>
   );
 
-  // Buscamos los campos por su atributo name.
-  // Se hace así porque los label actuales no tienen htmlFor
-  // y los inputs no tienen id.
   const campoCorreo = container.querySelector(
     'input[name="correo"]'
   ) as HTMLInputElement;

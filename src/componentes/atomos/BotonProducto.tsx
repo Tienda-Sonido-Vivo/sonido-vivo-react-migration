@@ -1,4 +1,3 @@
-// src/componentes/atomos/BotonProducto.tsx
 
 import { Link } from "react-router-dom";
 

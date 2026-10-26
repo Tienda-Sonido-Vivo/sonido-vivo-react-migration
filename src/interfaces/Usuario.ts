@@ -1,4 +1,3 @@
-// src/interfaces/Usuario.ts
 
 export interface Usuario {
   run: string;

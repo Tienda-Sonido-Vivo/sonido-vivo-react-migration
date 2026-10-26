@@ -1,4 +1,3 @@
-// src/datos/menuAdmin.ts
 
 import type { Rol } from "../servicios/sesion";
 
@@ -11,7 +10,6 @@ export interface EnlaceAdmin {
   disponible: boolean;
 }
 
-// "disponible: false" muestra el enlace deshabilitado ("Próximamente")
 export const enlacesAdmin: EnlaceAdmin[] = [
   {
     ruta: "/admin/usuarios",

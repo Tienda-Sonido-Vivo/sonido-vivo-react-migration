@@ -1,4 +1,3 @@
-// src/paginas/Checkout.tsx
 
 import { Link, useNavigate } from "react-router-dom";
 

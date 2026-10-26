@@ -1,4 +1,3 @@
-// src/componentes/moleculas/CardProducto.tsx
 
 import type { Producto } from "../../interfaces/Producto";
 import BotonProducto from "../atomos/BotonProducto";

@@ -1,8 +1,8 @@
 type Props = {
   tipo: string;
   nombre: string;
-  valor: string; // Valor actual del campo
-  alCambiar: (valor: string) => void; // Función para actualizar el valor
+  valor: string;
+  alCambiar: (valor: string) => void;
 };
 
 function Input({ tipo, nombre, valor, alCambiar }: Props) {
@@ -11,9 +11,7 @@ function Input({ tipo, nombre, valor, alCambiar }: Props) {
       type={tipo}
       name={nombre}
       className="form-control"
-      // Muestra el valor guardado
       value={valor}
-      // Detecta cuando el usuario escribe
       onChange={(e) => alCambiar(e.target.value)}
     />
   );

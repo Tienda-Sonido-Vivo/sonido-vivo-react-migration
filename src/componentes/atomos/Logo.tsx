@@ -1,4 +1,3 @@
-// src/componentes/atomos/Logo.tsx
 
 import { Link } from "react-router-dom";
 
