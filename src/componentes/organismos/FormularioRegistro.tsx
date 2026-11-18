@@ -1,23 +1,17 @@
-
-
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { regionesComunas } from "../../datos/regionesComunas";
-import type { Usuario } from "../../interfaces/Usuario";
-import { normalizarRun, validarRun } from "../../utilidades/run";
+import { validarRun, normalizarRun } from "../../utilidades/run";
+import type { DatosRegistroCliente } from "../../servicios/authServicio";
 
 interface FormularioRegistroProps {
-  usuarios: Usuario[];
-  onRegistrarUsuario: (usuario: Usuario) => void;
+  onRegistrarUsuario: (datos: DatosRegistroCliente) => Promise<void>;
 }
 
-function FormularioRegistro({
-  usuarios,
-  onRegistrarUsuario,
-}: FormularioRegistroProps) {
+function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
   const navigate = useNavigate();
 
   const [run, setRun] = useState("");
@@ -30,17 +24,16 @@ function FormularioRegistro({
   const [direccion, setDireccion] = useState("");
   const [clave, setClave] = useState("");
   const [confirmarClave, setConfirmarClave] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
   const comunasDisponibles = region ? regionesComunas[region] ?? [] : [];
 
-  const manejarEnvio = (event: FormEvent<HTMLFormElement>) => {
+  const manejarEnvio = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const runLimpio = run.trim();
-    const runNormalizado = normalizarRun(runLimpio);
     const emailLimpio = email.trim().toLowerCase();
 
-    // 1. Validar campos obligatorios
     if (
       !runLimpio ||
       !nombre.trim() ||
@@ -52,84 +45,62 @@ function FormularioRegistro({
       !clave ||
       !confirmarClave
     ) {
-      alert("Debe completar todos los campos obligatorios: rut, nombre, apellidos, email, region, comuna, direccion, contraseña, confirmar contraseña");
+      alert("Debe completar todos los campos obligatorios.");
       return;
     }
 
-    // 2. Validar formato de RUT chileno con algoritmo de dígito verificador
     if (!validarRun(runLimpio)) {
-      alert(
-        "RUN inválido. Ingresa un RUT chileno válido (ej: 12345678-5 o 12.345.678-5)."
-      );
+      alert("RUN inválido. Ingresa un RUT chileno válido.");
       return;
     }
 
-    // 3. Validar si el RUN ya se encuentra registrado
-    const runExiste = usuarios.some(
-      (usuario) => normalizarRun(usuario.run) === runNormalizado
-    );
-
-    if (runExiste) {
-      alert("Ya existe un usuario registrado con ese RUN.");
-      return;
-    }
-
-    // 4. Validar formato de correo electrónico
-    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!formatoCorreo.test(emailLimpio)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpio)) {
       alert("Ingrese un correo electrónico válido.");
       return;
     }
 
-    // 5. Validar correo duplicado
-    const correoExiste = usuarios.some(
-      (usuario) => usuario.email.toLowerCase() === emailLimpio
-    );
-
-    if (correoExiste) {
-      alert("Ya existe un usuario registrado con ese correo.");
-      return;
-    }
-
-    // 6. Validar largo de nombres y apellidos
     if (nombre.trim().length < 2 || apellidos.trim().length < 2) {
       alert("El nombre y los apellidos deben tener al menos 2 caracteres.");
       return;
     }
 
-    // 7. Validar largo de clave y coincidencia
-    if (clave.length < 4 || clave.length > 10) {
-      alert("La clave debe tener entre 4 y 10 caracteres.");
+    if (fechaNacimiento && fechaNacimiento > new Date().toISOString().slice(0, 10)) {
+      alert("La fecha de nacimiento no puede ser futura.");
+      return;
+    }
+
+    if (clave.length < 8 || clave.length > 72) {
+      alert("La contraseña debe tener entre 8 y 72 caracteres.");
       return;
     }
 
     if (clave !== confirmarClave) {
-      alert("Las claves no coinciden.");
+      alert("Las contraseñas no coinciden.");
       return;
     }
 
-    // Construcción del nuevo usuario con el RUN normalizado
-    const nuevoUsuario: Usuario = {
-      run: runNormalizado,
-      nombre: nombre.trim(),
-      apellidos: apellidos.trim(),
-      email: emailLimpio,
-      fechaNacimiento: fechaNacimiento || undefined,
-      region,
-      comuna,
-      direccion: direccion.trim(),
-      rol: "Cliente",
-      estado: "Activo",
-      auditoria: [],
-      clave,
-    };
+    setEnviando(true);
 
-    onRegistrarUsuario(nuevoUsuario);
+    try {
+      await onRegistrarUsuario({
+        run: normalizarRun(runLimpio),
+        nombre: nombre.trim(),
+        apellidos: apellidos.trim(),
+        email: emailLimpio,
+        fechaNacimiento: fechaNacimiento || undefined,
+        region,
+        comuna,
+        direccion: direccion.trim(),
+        clave,
+      });
 
-    alert("Cuenta creada correctamente. Ahora puedes iniciar sesión.");
-
-    navigate("/login");
+      alert("Cuenta creada correctamente. Ahora puedes iniciar sesión.");
+      navigate("/login");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "No fue posible crear la cuenta.");
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -182,10 +153,7 @@ function FormularioRegistro({
 
       <div className="row">
         <div className="col-12 col-md-6 mb-3">
-          <label htmlFor="region" className="form-label">
-            Región *
-          </label>
-
+          <label htmlFor="region" className="form-label">Región *</label>
           <select
             id="region"
             name="region"
@@ -197,7 +165,6 @@ function FormularioRegistro({
             }}
           >
             <option value="">Selecciona una región</option>
-
             {Object.keys(regionesComunas).map((nombreRegion) => (
               <option key={nombreRegion} value={nombreRegion}>
                 {nombreRegion}
@@ -207,10 +174,7 @@ function FormularioRegistro({
         </div>
 
         <div className="col-12 col-md-6 mb-3">
-          <label htmlFor="comuna" className="form-label">
-            Comuna *
-          </label>
-
+          <label htmlFor="comuna" className="form-label">Comuna *</label>
           <select
             id="comuna"
             name="comuna"
@@ -220,7 +184,6 @@ function FormularioRegistro({
             onChange={(event) => setComuna(event.target.value)}
           >
             <option value="">Selecciona una comuna</option>
-
             {comunasDisponibles.map((nombreComuna) => (
               <option key={nombreComuna} value={nombreComuna}>
                 {nombreComuna}
@@ -255,8 +218,8 @@ function FormularioRegistro({
       />
 
       <div className="d-grid mt-4">
-        <button type="submit" className="btn btn-primary btn-lg">
-          Crear cuenta
+        <button type="submit" className="btn btn-primary btn-lg" disabled={enviando}>
+          {enviando ? "Creando cuenta..." : "Crear cuenta"}
         </button>
       </div>
     </form>

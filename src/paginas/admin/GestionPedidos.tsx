@@ -10,7 +10,7 @@ import { formatearMoneda } from "../../utilidades/formato";
 import ThOrdenable from "../../componentes/moleculas/ThOrdenable";
 import ModalPedido from "../../componentes/organismos/ModalPedido";
 
-const TOTAL_COLUMNAS = 6;
+const TOTAL_COLUMNAS = 7;
 
 const TEXTO_ENTREGA: Record<Pedido["metodoEntrega"], string> = {
   despacho: "Despacho a domicilio",
@@ -28,14 +28,11 @@ interface GestionPedidosProps {
   pedidos: Pedido[];
 
   onCambiarPedidos: (pedidos: Pedido[]) => void;
-
-  onConfirmarPago: (codigoPedido: string) => Promise<boolean>;
 }
 
 function GestionPedidos({
   pedidos,
   onCambiarPedidos,
-  onConfirmarPago,
 }: GestionPedidosProps) {
   const [pedidoEnModal, setPedidoEnModal] = useState<Pedido | null>(null);
 
@@ -44,7 +41,6 @@ function GestionPedidos({
   const [filtroEstado, setFiltroEstado] = useState("");
 
   const [mensaje, setMensaje] = useState("");
-  const [confirmandoPago, setConfirmandoPago] = useState<string | null>(null);
 
   const filtrados = useMemo(
     () =>
@@ -78,18 +74,6 @@ function GestionPedidos({
 
   const alternarDetalle = (codigo: string) => {
     setDetalleAbierto((actual) => (actual === codigo ? null : codigo));
-  };
-
-  const confirmarPago = async (pedido: Pedido) => {
-    setConfirmandoPago(pedido.codigo);
-
-    try {
-      if (await onConfirmarPago(pedido.codigo)) {
-        setMensaje(`El pago del pedido ${pedido.codigo} fue confirmado.`);
-      }
-    } finally {
-      setConfirmandoPago(null);
-    }
   };
 
   const encabezado = (etiqueta: string, campo: keyof Pedido) => (
@@ -154,6 +138,7 @@ function GestionPedidos({
 
               {encabezado("Total", "total")}
               {encabezado("Estado", "estado")}
+              <th scope="col">Pago</th>
 
               <th scope="col" className="admin-col-ajustada">
                 Acciones
@@ -194,6 +179,14 @@ function GestionPedidos({
                   </td>
 
                   <td>
+                    {pedido.pagado ? (
+                      <span className="badge text-bg-success">Pagado</span>
+                    ) : (
+                      <span className="badge text-bg-warning">Pendiente</span>
+                    )}
+                  </td>
+
+                  <td>
                     <div className="d-flex gap-2">
                       <button
                         type="button"
@@ -209,22 +202,16 @@ function GestionPedidos({
                       <button
                         type="button"
                         className="btn btn-outline-success btn-sm"
-                        onClick={() => setPedidoEnModal(pedido)}
+                        onClick={() => {
+                          if (!pedido.pagado) {
+                            setMensaje("No puedes avanzar el estado operacional de un pedido sin pagar.");
+                            return;
+                          }
+                          setPedidoEnModal(pedido);
+                        }}
                       >
                         Gestionar
                       </button>
-                      {!pedido.pagado && (
-                        <button
-                          type="button"
-                          className="btn btn-outline-warning btn-sm text-nowrap"
-                          disabled={confirmandoPago === pedido.codigo}
-                          onClick={() => void confirmarPago(pedido)}
-                        >
-                          {confirmandoPago === pedido.codigo
-                            ? "Confirmando..."
-                            : "Confirmar pago"}
-                        </button>
-                      )}
                     </div>
                   </td>
                 </tr>

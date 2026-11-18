@@ -1,14 +1,16 @@
-
 import { useSearchParams } from "react-router-dom";
 
-import { productos } from "../datos/productos";
-
+import type { Producto } from "../interfaces/Producto";
 import CardProducto from "../componentes/moleculas/CardProducto";
 import TituloSeccion from "../componentes/atomos/TituloSeccion";
 
-function Catalogo() {
-  const [searchParams] = useSearchParams();
+interface CatalogoProps {
+  productos: Producto[];
+  cargando: boolean;
+}
 
+function Catalogo({ productos, cargando }: CatalogoProps) {
+  const [searchParams] = useSearchParams();
   const categoria = searchParams.get("categoria");
 
   const productosFiltrados = categoria
@@ -22,7 +24,9 @@ function Catalogo() {
 
         <hr />
 
-        {productosFiltrados.length > 0 ? (
+        {cargando ? (
+          <p className="text-center text-muted py-4">Cargando catálogo...</p>
+        ) : productosFiltrados.length > 0 ? (
           <div className="row g-4">
             {productosFiltrados.map((producto) => (
               <CardProducto key={producto.codigo} producto={producto} />

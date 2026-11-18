@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 import type { Usuario } from "../interfaces/Usuario";
 import { apiRequest } from "./api";
@@ -17,7 +16,6 @@ interface UsuarioApiDTO {
   rol: "CLIENTE" | "VENDEDOR" | "ADMIN";
   estado: "ACTIVO" | "INACTIVO";
   auditoria: string[];
-  requiereActivacion: boolean;
 }
 
 interface LoginApiDTO {
@@ -62,7 +60,6 @@ export function adaptarUsuario(usuario: UsuarioApiDTO): Usuario {
     rol: roles[usuario.rol],
     estado: estados[usuario.estado],
     auditoria: usuario.auditoria ?? [],
-    requiereActivacion: usuario.requiereActivacion,
   };
 }
 
@@ -93,13 +90,6 @@ export async function obtenerSesionActual(): Promise<Usuario> {
   guardarSesion(usuario);
 
   return usuario;
-}
-
-export async function completarActivacion(token: string, nuevaClave: string): Promise<void> {
-  await apiRequest<void>("/auth/activaciones/completar", {
-    method: "POST",
-    body: JSON.stringify({ token, nuevaClave }),
-  });
 }
 
 export async function cerrarSesionActual(): Promise<void> {

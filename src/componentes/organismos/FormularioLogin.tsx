@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,24 +6,23 @@ import CampoFormulario from "../moleculas/CampoFormulario";
 import type { Usuario } from "../../interfaces/Usuario";
 
 interface FormularioLoginProps {
-  usuarios: Usuario[];
-  onIniciarSesion: (usuario: Usuario) => void;
+  onIniciarSesion: (email: string, clave: string) => Promise<Usuario>;
 }
 
-function FormularioLogin({ usuarios, onIniciarSesion }: FormularioLoginProps) {
+function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
   const navigate = useNavigate();
 
   const [correo, setCorreo] = useState("");
   const [clave, setClave] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  const manejarEnvio = (event: FormEvent<HTMLFormElement>) => {
+  const manejarEnvio = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const correoLimpio = correo.trim().toLowerCase();
 
-    if (!correoLimpio || !clave.trim()) {
+    if (!correoLimpio || !clave) {
       alert("Debe completar todos los campos.");
-
       return;
     }
 
@@ -32,43 +30,28 @@ function FormularioLogin({ usuarios, onIniciarSesion }: FormularioLoginProps) {
 
     if (!formatoCorreo.test(correoLimpio)) {
       alert("Ingrese un correo válido.");
-
       return;
     }
 
-    if (clave.length < 4 || clave.length > 10) {
-      alert("La clave debe tener entre 4 y 10 caracteres.");
-
+    if (clave.length < 8 || clave.length > 72) {
+      alert("La contraseña debe tener entre 8 y 72 caracteres.");
       return;
     }
 
-    const usuario = usuarios.find(
-      (usuarioActual) =>
-        usuarioActual.email.toLowerCase() === correoLimpio &&
-        usuarioActual.clave === clave &&
-        usuarioActual.estado === "Activo",
-    );
+    setEnviando(true);
 
-    if (!usuario) {
-      alert("Correo o clave incorrectos, o usuario inactivo.");
+    try {
+      const usuario = await onIniciarSesion(correoLimpio, clave);
 
-      return;
-    }
-
-    sessionStorage.setItem("usuarioLogueado", "true");
-
-    sessionStorage.setItem("rolUsuario", usuario.rol);
-
-    sessionStorage.setItem("correoUsuario", usuario.email);
-
-    onIniciarSesion(usuario);
-
-    window.dispatchEvent(new Event("sesionCambiada"));
-
-    if (usuario.rol === "Administrador" || usuario.rol === "Vendedor") {
-      navigate("/admin");
-    } else {
-      navigate("/");
+      if (usuario.rol === "Administrador" || usuario.rol === "Vendedor") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "No fue posible iniciar sesión.");
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -94,11 +77,10 @@ function FormularioLogin({ usuarios, onIniciarSesion }: FormularioLoginProps) {
         <button
           type="submit"
           className="btn text-white btn-lg"
-          style={{
-            backgroundColor: "#005f7f",
-          }}
+          style={{ backgroundColor: "#005f7f" }}
+          disabled={enviando}
         >
-          Ingresar
+          {enviando ? "Ingresando..." : "Ingresar"}
         </button>
       </div>
     </form>

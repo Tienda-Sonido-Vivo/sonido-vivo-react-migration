@@ -1,15 +1,13 @@
-
 import { Link } from "react-router-dom";
 
 import FormularioLogin from "../componentes/organismos/FormularioLogin";
 import type { Usuario } from "../interfaces/Usuario";
 
 interface LoginProps {
-  usuarios: Usuario[];
-  onIniciarSesion: (usuario: Usuario) => void;
+  onIniciarSesion: (email: string, clave: string) => Promise<Usuario>;
 }
 
-function Login({ usuarios, onIniciarSesion }: LoginProps) {
+function Login({ onIniciarSesion }: LoginProps) {
   return (
     <main className="container my-5">
       <div className="row justify-content-center">
@@ -17,10 +15,7 @@ function Login({ usuarios, onIniciarSesion }: LoginProps) {
           <div className="card shadow p-4 border-0 rounded-3">
             <h1 className="h2 text-center fw-bold mb-4">Iniciar Sesión</h1>
 
-            <FormularioLogin
-              usuarios={usuarios}
-              onIniciarSesion={onIniciarSesion}
-            />
+            <FormularioLogin onIniciarSesion={onIniciarSesion} />
 
             <div className="text-center mt-3">
               <p className="mb-0 text-muted fs-6">

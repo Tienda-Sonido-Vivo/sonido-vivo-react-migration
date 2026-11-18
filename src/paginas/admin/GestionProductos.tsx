@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from "react";
 
 import type { Producto } from "../../interfaces/Producto";
 import { UMBRAL_STOCK_BAJO } from "../../datos/configuracion";
-import { obtenerRol } from "../../servicios/sesion";
 import { useOrdenamiento } from "../../hooks/useOrdenamiento";
 import { formatearMoneda } from "../../utilidades/formato";
 
@@ -18,21 +17,15 @@ interface EstadoModal {
 
 interface GestionProductosProps {
   productos: Producto[];
-
-  categorias?: string[];
-
+  categorias: string[];
   onCambiarProductos: (productos: Producto[]) => void;
 }
 
 function GestionProductos({
   productos,
-  categorias: categoriasProp,
+  categorias,
   onCambiarProductos,
 }: GestionProductosProps) {
-  const categorias = categoriasProp ?? [
-    ...new Set(productos.map((producto) => producto.categoria)),
-  ];
-  const esAdministrador = obtenerRol() === "Administrador";
 
   const [modal, setModal] = useState<EstadoModal | null>(null);
 
@@ -128,15 +121,13 @@ function GestionProductos({
           </p>
         </div>
 
-        {esAdministrador && (
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={() => setModal({ producto: null })}
-          >
-            Añadir producto
-          </button>
-        )}
+        <button
+          type="button"
+          className="btn btn-success"
+          onClick={() => setModal({ producto: null })}
+        >
+          Añadir producto
+        </button>
       </div>
 
       {cantidadStockBajo > 0 && (
@@ -264,18 +255,16 @@ function GestionProductos({
                       className="btn btn-outline-secondary btn-sm text-nowrap"
                       onClick={() => setModal({ producto })}
                     >
-                      {esAdministrador ? "Editar" : "Actualizar stock"}
+                      Editar
                     </button>
 
-                    {esAdministrador && (
-                      <button
-                        type="button"
-                        className="btn btn-outline-danger btn-sm"
-                        onClick={() => eliminar(producto)}
-                      >
-                        Eliminar
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => eliminar(producto)}
+                    >
+                      Eliminar
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -289,7 +278,7 @@ function GestionProductos({
           producto={modal.producto}
           productos={productos}
           categorias={categorias}
-          soloStock={!esAdministrador}
+          soloStock={false}
           onGuardar={guardar}
           onCerrar={cerrarModal}
         />

@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 import { apiRequest } from "./api";
 
@@ -12,13 +11,19 @@ export interface Pago {
   estado: "PENDIENTE" | "COMPLETADO" | "FALLIDO";
 }
 
-export async function confirmarPagoPedido(codigoPedido: string): Promise<Pago> {
-  return apiRequest<Pago>(
-    `/pagos/${encodeURIComponent(codigoPedido)}/confirmar`,
+export async function procesarPagoPedido(codigoPedido: string): Promise<Pago> {
+  const pago = await apiRequest<Pago>(
+    `/pagos/${encodeURIComponent(codigoPedido)}/procesar`,
     {
-      method: "PATCH",
+      method: "POST",
     },
   );
+
+  if (pago.estado !== "COMPLETADO") {
+    throw new Error("El pago no pudo completarse. Tu pedido queda pendiente y tu carrito se conserva para que puedas intentarlo nuevamente.");
+  }
+
+  return pago;
 }
 
 export async function obtenerPagos(): Promise<Pago[]> {

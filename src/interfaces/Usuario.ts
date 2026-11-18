@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 export interface Usuario {
   id?: number;
@@ -13,7 +12,6 @@ export interface Usuario {
   rol: "Administrador" | "Vendedor" | "Cliente";
   estado: "Activo" | "Inactivo";
   auditoria?: string[];
-  requiereActivacion?: boolean;
 }
 
 

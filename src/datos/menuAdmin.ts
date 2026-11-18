@@ -1,4 +1,3 @@
-
 import type { Rol } from "../servicios/sesion";
 
 export interface EnlaceAdmin {
@@ -19,7 +18,6 @@ export const enlacesAdmin: EnlaceAdmin[] = [
     roles: ["Administrador"],
     disponible: true,
   },
-
   {
     ruta: "/admin/productos",
     icono: "🎸",
@@ -28,7 +26,6 @@ export const enlacesAdmin: EnlaceAdmin[] = [
     roles: ["Administrador", "Vendedor"],
     disponible: true,
   },
-
   {
     ruta: "/admin/pedidos",
     icono: "📦",
@@ -40,8 +37,8 @@ export const enlacesAdmin: EnlaceAdmin[] = [
   {
     ruta: "/admin/mensajes",
     icono: "✉️",
-    titulo: "Mensajes",
-    descripcion: "Revisa los mensajes recibidos de los clientes.",
+    titulo: "Mensajes recibidos",
+    descripcion: "Consulta los mensajes de contacto y preguntas frecuentes.",
     roles: ["Administrador", "Vendedor"],
     disponible: true,
   },
@@ -49,7 +46,7 @@ export const enlacesAdmin: EnlaceAdmin[] = [
     ruta: "/admin/ventas",
     icono: "📊",
     titulo: "Ventas",
-    descripcion: "Consulta los resúmenes de ventas.",
+    descripcion: "Consulta los resúmenes de ventas diarias y mensuales.",
     roles: ["Administrador"],
     disponible: true,
   },

@@ -7,6 +7,7 @@ import ResumenCompra from "../componentes/moleculas/ResumenCompra";
 interface CarritoProps {
   carrito: ItemCarrito[];
   productos: Producto[];
+  cargando?: boolean;
   onCambiarCantidad: (codigo: string, cantidad: number) => void;
   onEliminar: (codigo: string) => void;
 }
@@ -14,10 +15,19 @@ interface CarritoProps {
 function Carrito({
   carrito,
   productos,
+  cargando = false,
   onCambiarCantidad,
   onEliminar,
 }: CarritoProps) {
   const navigate = useNavigate();
+
+  if (cargando) {
+    return (
+      <main className="container py-5">
+        <p className="text-center text-muted">Cargando tu carrito...</p>
+      </main>
+    );
+  }
 
   const subtotal = carrito.reduce((acumulado, item) => {
     const producto = productos.find((p) => p.codigo === item.codigo);

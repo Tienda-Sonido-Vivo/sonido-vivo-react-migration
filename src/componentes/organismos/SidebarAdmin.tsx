@@ -2,17 +2,21 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import { enlacesAdmin } from "../../datos/menuAdmin";
-import { cerrarSesion, obtenerRol } from "../../servicios/sesion";
+import { obtenerRol } from "../../servicios/sesion";
+import { cerrarSesionActual } from "../../servicios/authServicio";
 
 function SidebarAdmin() {
   const navigate = useNavigate();
 
   const rol = obtenerRol();
 
-  const salir = () => {
-    cerrarSesion();
-
-    navigate("/");
+  const salir = async () => {
+    try {
+      await cerrarSesionActual();
+      navigate("/");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "No fue posible cerrar la sesión.");
+    }
   };
 
   const enlacesVisibles = enlacesAdmin.filter(
@@ -76,7 +80,7 @@ function SidebarAdmin() {
         <button
           type="button"
           className="btn btn-outline-warning btn-sm"
-          onClick={salir}
+          onClick={() => void salir()}
         >
           Cerrar sesión
         </button>

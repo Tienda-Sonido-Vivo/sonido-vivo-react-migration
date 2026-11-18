@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import FormularioCheckout from "../componentes/organismos/FormularioCheckout";
@@ -16,17 +17,27 @@ interface CheckoutProps {
   productos: Producto[];
 
   correoUsuario: string;
-
-  onConfirmarPedido: (datos: DatosFormularioCheckout) => string | null;
+  cargandoCarrito: boolean;
+  onConfirmarPedido: (datos: DatosFormularioCheckout) => Promise<string | null>;
 }
 
 function Checkout({
   carrito,
   productos,
   correoUsuario,
+  cargandoCarrito,
   onConfirmarPedido,
 }: CheckoutProps) {
   const navigate = useNavigate();
+  const [envio, setEnvio] = useState(8990);
+
+  if (cargandoCarrito) {
+    return (
+      <main className="container py-5">
+        <p className="text-center text-muted">Cargando tu carrito...</p>
+      </main>
+    );
+  }
 
   if (!correoUsuario) {
     return (
@@ -66,12 +77,14 @@ function Checkout({
     return acumulado + (producto ? producto.precio * item.cantidad : 0);
   }, 0);
 
-  const manejarConfirmacion = (datos: DatosFormularioCheckout) => {
-    const codigoPedido = onConfirmarPedido(datos);
+  const manejarConfirmacion = async (datos: DatosFormularioCheckout) => {
+    const codigoPedido = await onConfirmarPedido(datos);
 
     if (codigoPedido) {
       navigate(`/confirmacion-pedido/${codigoPedido}`);
     }
+
+    return codigoPedido;
   };
 
   return (
@@ -105,6 +118,7 @@ function Checkout({
           <FormularioCheckout
             correoUsuario={correoUsuario}
             onConfirmarPedido={manejarConfirmacion}
+            onMetodoEntregaChange={(metodo) => setEnvio(metodo === "despacho" ? 8990 : 0)}
           />
         </section>
 
@@ -154,7 +168,7 @@ function Checkout({
 
               <hr />
 
-              <ResumenCompra subtotal={subtotal} envio={8990} mostrarEnvio />
+              <ResumenCompra subtotal={subtotal} envio={envio} mostrarEnvio />
             </div>
           </div>
         </aside>
