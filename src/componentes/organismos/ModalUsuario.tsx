@@ -20,7 +20,6 @@ interface FormularioUsuario {
   direccion: string;
   rol: Usuario["rol"];
   estado: Usuario["estado"];
-  clave: string;
 }
 
 interface ModalUsuarioProps {
@@ -50,7 +49,6 @@ function formularioInicial(usuario: Usuario | null): FormularioUsuario {
       direccion: "",
       rol: "Cliente",
       estado: "Activo",
-      clave: "",
     };
   }
 
@@ -65,7 +63,6 @@ function formularioInicial(usuario: Usuario | null): FormularioUsuario {
     direccion: usuario.direccion,
     rol: usuario.rol,
     estado: usuario.estado,
-    clave: "",
   };
 }
 
@@ -161,15 +158,6 @@ function ModalUsuario({
       return;
     }
 
-    const claveObligatoria = esNuevo || formulario.clave !== "";
-    if (
-      claveObligatoria &&
-      (formulario.clave.length < 4 || formulario.clave.length > 10)
-    ) {
-      alert("La clave debe tener entre 4 y 10 caracteres.");
-      return;
-    }
-
     const hoy = fechaHoy();
     const auditoria = [...(usuario?.auditoria ?? [])];
 
@@ -204,8 +192,6 @@ function ModalUsuario({
       rol: formulario.rol,
       estado: formulario.estado,
       auditoria,
-      clave:
-        formulario.clave !== "" ? formulario.clave : (usuario?.clave ?? ""),
     };
 
     onGuardar(resultado, esNuevo);
@@ -390,15 +376,6 @@ function ModalUsuario({
           </div>
         </div>
 
-        <div className="col-12 col-md-4">
-          <CampoFormulario
-            etiqueta={esNuevo ? "Clave" : "Nueva clave"}
-            tipo="password"
-            nombre="clave"
-            valor={formulario.clave}
-            alCambiar={(valor) => cambiar("clave", valor)}
-          />
-        </div>
       </div>
     </ModalBase>
   );

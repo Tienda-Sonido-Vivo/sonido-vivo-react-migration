@@ -2,7 +2,6 @@
 import { useCallback, useMemo, useState } from "react";
 
 import type { Producto } from "../../interfaces/Producto";
-import { categorias } from "../../datos/categorias";
 import { UMBRAL_STOCK_BAJO } from "../../datos/configuracion";
 import { obtenerRol } from "../../servicios/sesion";
 import { useOrdenamiento } from "../../hooks/useOrdenamiento";
@@ -20,13 +19,19 @@ interface EstadoModal {
 interface GestionProductosProps {
   productos: Producto[];
 
+  categorias?: string[];
+
   onCambiarProductos: (productos: Producto[]) => void;
 }
 
 function GestionProductos({
   productos,
+  categorias: categoriasProp,
   onCambiarProductos,
 }: GestionProductosProps) {
+  const categorias = categoriasProp ?? [
+    ...new Set(productos.map((producto) => producto.categoria)),
+  ];
   const esAdministrador = obtenerRol() === "Administrador";
 
   const [modal, setModal] = useState<EstadoModal | null>(null);
@@ -283,6 +288,7 @@ function GestionProductos({
         <ModalProducto
           producto={modal.producto}
           productos={productos}
+          categorias={categorias}
           soloStock={!esAdministrador}
           onGuardar={guardar}
           onCerrar={cerrarModal}

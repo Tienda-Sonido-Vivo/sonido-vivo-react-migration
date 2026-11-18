@@ -28,9 +28,15 @@ interface GestionPedidosProps {
   pedidos: Pedido[];
 
   onCambiarPedidos: (pedidos: Pedido[]) => void;
+
+  onConfirmarPago: (codigoPedido: string) => Promise<boolean>;
 }
 
-function GestionPedidos({ pedidos, onCambiarPedidos }: GestionPedidosProps) {
+function GestionPedidos({
+  pedidos,
+  onCambiarPedidos,
+  onConfirmarPago,
+}: GestionPedidosProps) {
   const [pedidoEnModal, setPedidoEnModal] = useState<Pedido | null>(null);
 
   const [detalleAbierto, setDetalleAbierto] = useState<string | null>(null);
@@ -38,6 +44,7 @@ function GestionPedidos({ pedidos, onCambiarPedidos }: GestionPedidosProps) {
   const [filtroEstado, setFiltroEstado] = useState("");
 
   const [mensaje, setMensaje] = useState("");
+  const [confirmandoPago, setConfirmandoPago] = useState<string | null>(null);
 
   const filtrados = useMemo(
     () =>
@@ -71,6 +78,18 @@ function GestionPedidos({ pedidos, onCambiarPedidos }: GestionPedidosProps) {
 
   const alternarDetalle = (codigo: string) => {
     setDetalleAbierto((actual) => (actual === codigo ? null : codigo));
+  };
+
+  const confirmarPago = async (pedido: Pedido) => {
+    setConfirmandoPago(pedido.codigo);
+
+    try {
+      if (await onConfirmarPago(pedido.codigo)) {
+        setMensaje(`El pago del pedido ${pedido.codigo} fue confirmado.`);
+      }
+    } finally {
+      setConfirmandoPago(null);
+    }
   };
 
   const encabezado = (etiqueta: string, campo: keyof Pedido) => (
@@ -194,6 +213,18 @@ function GestionPedidos({ pedidos, onCambiarPedidos }: GestionPedidosProps) {
                       >
                         Gestionar
                       </button>
+                      {!pedido.pagado && (
+                        <button
+                          type="button"
+                          className="btn btn-outline-warning btn-sm text-nowrap"
+                          disabled={confirmandoPago === pedido.codigo}
+                          onClick={() => void confirmarPago(pedido)}
+                        >
+                          {confirmandoPago === pedido.codigo
+                            ? "Confirmando..."
+                            : "Confirmar pago"}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
