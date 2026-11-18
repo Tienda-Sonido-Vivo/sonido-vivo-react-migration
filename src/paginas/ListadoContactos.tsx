@@ -19,56 +19,69 @@ Y SE LLAMA "SiderbarAdmin"
 */
 
 import { useEffect, useState } from "react";
+import {
+  actualizarRevisionMensaje,
+  obtenerMensajes,
+  type Mensaje,
+} from "../servicios/mensajeriaServicio";
 
-interface Contacto{
+function ListadoContactos() {
+  const [contactos, setContactos] = useState<Mensaje[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-    id: number;
-    nombreCompleto: string;
-    correo: string;
-    mensaje: string;
+  useEffect(() => {
+    obtenerMensajes()
+      .then(setContactos)
+      .catch(() => setError("No se pudieron cargar los mensajes."))
+      .finally(() => setCargando(false));
+  }, []);
 
-}
+  const cambiarRevision = async (mensaje: Mensaje) => {
+    try {
+      const actualizado = await actualizarRevisionMensaje(
+        mensaje.id,
+        !mensaje.revisado,
+      );
+      setContactos((actuales) =>
+        actuales.map((actual) =>
+          actual.id === actualizado.id ? actualizado : actual,
+        ),
+      );
+    } catch {
+      setError("No se pudo actualizar el estado del mensaje.");
+    }
+  };
 
-function ListadoContactos(){
-
-    const [contactos, setContactos] = useState<Contacto[]>([]);
-
-    useEffect(() =>{
-
-        fetch("http://localhost:8082/api/contactos")
-        .then((respuesta) =>{
-
-            if(!respuesta.ok){
-
-                throw new Error("Error al consultar los contactos");
-
-            }
-
-            return respuesta.json();
-        })
-        .then((datos) => setContactos(datos))
-        .catch(() => alert("No se pudieron cargar los contactos"));
-    }, []);
-
-    return(
-
-        <div>
-            <h2>Contactos recibidos</h2>
-
-            {contactos.map((contacto) => (
-
-                <div className="card p-3 mb-3" key={contacto.id}>
-                    <h5>{contacto.nombreCompleto}</h5>
-                    <p>{contacto.correo}</p>
-                    <p>{contacto.mensaje}</p>
-
-                </div>
-
-            ))}
-        </div>
-
-    );
-
+  return (
+    <>
+      <h1>Mensajes recibidos</h1>
+      {cargando && <p>Cargando mensajes...</p>}
+      {error !== "" && <div className="alert alert-danger">{error}</div>}
+      {!cargando && contactos.length === 0 && (
+        <p className="text-muted">No hay mensajes para mostrar.</p>
+      )}
+      {contactos.map((contacto) => (
+        <article className="card p-3 mb-3" key={contacto.id}>
+          <div className="d-flex justify-content-between gap-3">
+            <h2 className="h5">{contacto.nombreCompleto}</h2>
+            <span className={"badge " + (contacto.revisado ? "text-bg-success" : "text-bg-warning")}>
+              {contacto.revisado ? "Revisado" : "Pendiente"}
+            </span>
+          </div>
+          <p className="mb-1">{contacto.correo}</p>
+          <p>{contacto.mensaje}</p>
+          <button
+            type="button"
+            className="btn btn-outline-primary btn-sm align-self-start"
+            onClick={() => void cambiarRevision(contacto)}
+          >
+            Marcar como {contacto.revisado ? "pendiente" : "revisado"}
+          </button>
+        </article>
+      ))}
+    </>
+  );
 }
 
 export default ListadoContactos;

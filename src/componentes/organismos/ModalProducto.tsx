@@ -2,7 +2,6 @@
 import { useState } from "react";
 
 import type { Producto } from "../../interfaces/Producto";
-import { categorias } from "../../datos/categorias";
 
 import ModalBase from "../moleculas/ModalBase";
 import CampoFormulario from "../moleculas/CampoFormulario";
@@ -24,6 +23,8 @@ interface ModalProductoProps {
   producto: Producto | null;
 
   productos: Producto[];
+
+  categorias: string[];
 
   // true = el Vendedor solo puede modificar el stock
   soloStock: boolean;
@@ -64,6 +65,7 @@ function formularioInicial(producto: Producto | null): FormularioProducto {
 function ModalProducto({
   producto,
   productos,
+  categorias,
   soloStock,
   onGuardar,
   onCerrar,

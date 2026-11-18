@@ -37,4 +37,20 @@ export const enlacesAdmin: EnlaceAdmin[] = [
     roles: ["Administrador", "Vendedor"],
     disponible: true,
   },
+  {
+    ruta: "/admin/mensajes",
+    icono: "✉️",
+    titulo: "Mensajes",
+    descripcion: "Revisa los mensajes recibidos de los clientes.",
+    roles: ["Administrador", "Vendedor"],
+    disponible: true,
+  },
+  {
+    ruta: "/admin/ventas",
+    icono: "📊",
+    titulo: "Ventas",
+    descripcion: "Consulta los resúmenes de ventas.",
+    roles: ["Administrador"],
+    disponible: true,
+  },
 ];
