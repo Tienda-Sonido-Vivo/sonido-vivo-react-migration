@@ -12,6 +12,8 @@ export interface Usuario {
   rol: "Administrador" | "Vendedor" | "Cliente";
   estado: "Activo" | "Inactivo";
   auditoria?: string[];
+  requiereActivacion?: boolean;
+  clave?: string;
 }
 
 

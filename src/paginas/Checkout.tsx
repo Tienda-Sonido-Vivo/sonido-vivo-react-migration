@@ -17,16 +17,17 @@ interface CheckoutProps {
   productos: Producto[];
 
   correoUsuario: string;
-  cargandoCarrito: boolean;
+
   onConfirmarPedido: (datos: DatosFormularioCheckout) => Promise<string | null>;
+  cargandoCarrito?: boolean;
 }
 
 function Checkout({
   carrito,
   productos,
   correoUsuario,
-  cargandoCarrito,
   onConfirmarPedido,
+  cargandoCarrito = false,
 }: CheckoutProps) {
   const navigate = useNavigate();
   const [envio, setEnvio] = useState(8990);

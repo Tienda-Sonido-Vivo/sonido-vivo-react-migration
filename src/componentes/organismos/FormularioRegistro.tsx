@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import CampoFormulario from "../moleculas/CampoFormulario";
 import { regionesComunas } from "../../datos/regionesComunas";
-import { validarRun, normalizarRun } from "../../utilidades/run";
 import type { DatosRegistroCliente } from "../../servicios/authServicio";
+import { normalizarRun, validarRun } from "../../utilidades/run";
 
 interface FormularioRegistroProps {
   onRegistrarUsuario: (datos: DatosRegistroCliente) => Promise<void>;
@@ -25,7 +25,6 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
   const [clave, setClave] = useState("");
   const [confirmarClave, setConfirmarClave] = useState("");
   const [enviando, setEnviando] = useState(false);
-
   const comunasDisponibles = region ? regionesComunas[region] ?? [] : [];
 
   const manejarEnvio = async (event: FormEvent<HTMLFormElement>) => {
@@ -54,11 +53,15 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpio)) {
+    // 3. Validar formato de correo electrónico
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formatoCorreo.test(emailLimpio)) {
       alert("Ingrese un correo electrónico válido.");
       return;
     }
 
+    // 6. Validar largo de nombres y apellidos
     if (nombre.trim().length < 2 || apellidos.trim().length < 2) {
       alert("El nombre y los apellidos deben tener al menos 2 caracteres.");
       return;
@@ -69,8 +72,8 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
       return;
     }
 
-    if (clave.length < 8 || clave.length > 72) {
-      alert("La contraseña debe tener entre 8 y 72 caracteres.");
+    if (clave.length < 4 || clave.length > 10) {
+      alert("La contraseña debe tener entre 4 y 10 caracteres.");
       return;
     }
 
@@ -79,21 +82,24 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
       return;
     }
 
+    // Construcción del nuevo usuario con el RUN normalizado
+    const runNormalizado = normalizarRun(runLimpio);
+    const nuevoUsuario: DatosRegistroCliente = {
+      run: runNormalizado,
+      nombre: nombre.trim(),
+      apellidos: apellidos.trim(),
+      email: emailLimpio,
+      fechaNacimiento: fechaNacimiento || undefined,
+      region,
+      comuna,
+      direccion: direccion.trim(),
+      clave,
+    };
+
     setEnviando(true);
 
     try {
-      await onRegistrarUsuario({
-        run: normalizarRun(runLimpio),
-        nombre: nombre.trim(),
-        apellidos: apellidos.trim(),
-        email: emailLimpio,
-        fechaNacimiento: fechaNacimiento || undefined,
-        region,
-        comuna,
-        direccion: direccion.trim(),
-        clave,
-      });
-
+      await onRegistrarUsuario(nuevoUsuario);
       alert("Cuenta creada correctamente. Ahora puedes iniciar sesión.");
       navigate("/login");
     } catch (error) {

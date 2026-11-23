@@ -5,17 +5,26 @@ import CardProducto from "../componentes/moleculas/CardProducto";
 import TituloSeccion from "../componentes/atomos/TituloSeccion";
 
 interface CatalogoProps {
-  productos: Producto[];
-  cargando: boolean;
+  productos?: Producto[];
+  cargando?: boolean;
 }
 
-function Catalogo({ productos, cargando }: CatalogoProps) {
+function Catalogo({ productos: productosDisponibles = [], cargando = false }: CatalogoProps) {
   const [searchParams] = useSearchParams();
   const categoria = searchParams.get("categoria");
 
   const productosFiltrados = categoria
-    ? productos.filter((producto) => producto.categoria === categoria)
-    : productos;
+    ? productosDisponibles.filter((producto) => producto.categoria === categoria)
+    : productosDisponibles;
+
+  if (cargando) {
+    return (
+      <main className="container mt-4 mb-5">
+        <TituloSeccion>{categoria || "Catálogo de productos"}</TituloSeccion>
+        <p className="text-center text-muted py-4">Cargando productos...</p>
+      </main>
+    );
+  }
 
   return (
     <main className="container mt-4 mb-5">

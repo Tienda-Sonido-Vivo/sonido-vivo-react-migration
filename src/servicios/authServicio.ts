@@ -92,6 +92,13 @@ export async function obtenerSesionActual(): Promise<Usuario> {
   return usuario;
 }
 
+export async function completarActivacion(token: string, nuevaClave: string): Promise<void> {
+  await apiRequest<void>("/auth/activaciones/completar", {
+    method: "POST",
+    body: JSON.stringify({ token, nuevaClave }),
+  });
+}
+
 export async function cerrarSesionActual(): Promise<void> {
   await apiRequest<void>("/auth/logout", {
     method: "POST",

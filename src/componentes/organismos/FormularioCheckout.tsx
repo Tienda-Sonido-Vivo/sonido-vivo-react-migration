@@ -23,7 +23,7 @@ export interface DatosFormularioCheckout {
 
 interface FormularioCheckoutProps {
   correoUsuario: string;
-  onConfirmarPedido: (datos: DatosFormularioCheckout) => Promise<string | null>;
+  onConfirmarPedido: (datos: DatosFormularioCheckout) => Promise<string | null | void>;
   onMetodoEntregaChange: (metodo: MetodoEntrega) => void;
 }
 
@@ -110,16 +110,26 @@ function FormularioCheckout({
 
     try {
       await onConfirmarPedido({
-        nombre: nombre.trim(),
-        apellidos: apellidos.trim(),
-        telefono: telefono.trim(),
-        correo: correo.trim(),
-        region,
-        comuna,
-        direccion: direccion.trim(),
-        numeroVivienda: numeroVivienda.trim(),
-        codigoPostal: codigoPostal.trim(),
-        metodoEntrega,
+      nombre: nombre.trim(),
+
+      apellidos: apellidos.trim(),
+
+      telefono: telefono.trim(),
+
+      correo: correo.trim(),
+
+      region,
+
+      comuna,
+
+      direccion: direccion.trim(),
+
+      numeroVivienda: numeroVivienda.trim(),
+
+      codigoPostal: codigoPostal.trim(),
+
+      metodoEntrega,
+
         metodoPago,
       });
     } finally {

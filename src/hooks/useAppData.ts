@@ -174,7 +174,7 @@ export function useAppData() {
       setCorreoUsuario(usuario?.email ?? "");
 
       if (!usuario) {
-        const habiaSesion = correoCarritoSincronizado.current !== null || correoUsuario !== "";
+        const habiaSesion = correoCarritoSincronizado.current !== null || obtenerCorreo() !== "";
 
         correoCarritoSincronizado.current = null;
 

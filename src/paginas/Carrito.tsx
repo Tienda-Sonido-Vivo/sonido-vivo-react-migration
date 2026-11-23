@@ -48,6 +48,9 @@ function Carrito({
 
   return (
     <main className="container py-4 py-md-5">
+      {cargando && (
+        <p className="text-center text-muted">Cargando carrito...</p>
+      )}
       <div className="mb-4">
         <h1 className="fw-bold">Carrito de compra</h1>
         <p className="text-muted mb-0">

@@ -7,6 +7,7 @@ import type { Usuario } from "../../interfaces/Usuario";
 
 interface FormularioLoginProps {
   onIniciarSesion: (email: string, clave: string) => Promise<Usuario>;
+  usuarios?: Usuario[];
 }
 
 function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
@@ -15,7 +16,6 @@ function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
   const [correo, setCorreo] = useState("");
   const [clave, setClave] = useState("");
   const [enviando, setEnviando] = useState(false);
-
   const manejarEnvio = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -33,8 +33,8 @@ function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
       return;
     }
 
-    if (clave.length < 8 || clave.length > 72) {
-      alert("La contraseña debe tener entre 8 y 72 caracteres.");
+    if (clave.length < 4 || clave.length > 10) {
+      alert("La contraseña debe tener entre 4 y 10 caracteres.");
       return;
     }
 
@@ -49,7 +49,7 @@ function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
         navigate("/");
       }
     } catch (error) {
-      alert(error instanceof Error ? error.message : "No fue posible iniciar sesión.");
+      alert(error instanceof Error ? error.message : "Correo o clave incorrectos.");
     } finally {
       setEnviando(false);
     }

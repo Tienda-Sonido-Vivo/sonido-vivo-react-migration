@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
 import FormularioRegistro from "../componentes/organismos/FormularioRegistro";
+
 import type { DatosRegistroCliente } from "../servicios/authServicio";
 
 interface RegistroProps {
@@ -19,7 +20,9 @@ function Registro({ onRegistrarUsuario }: RegistroProps) {
               Regístrate para comprar en Sonido Vivo.
             </p>
 
-            <FormularioRegistro onRegistrarUsuario={onRegistrarUsuario} />
+            <FormularioRegistro
+              onRegistrarUsuario={onRegistrarUsuario}
+            />
 
             <div className="text-center mt-4">
               <p className="mb-0 text-muted">

@@ -5,10 +5,10 @@ import type { Pedido } from "../interfaces/Pedido";
 interface MisPedidosProps {
   pedidos: Pedido[];
   correoUsuario: string;
-  cargando: boolean;
+  cargando?: boolean;
 }
 
-function MisPedidos({ pedidos, correoUsuario, cargando }: MisPedidosProps) {
+function MisPedidos({ pedidos, correoUsuario, cargando = false }: MisPedidosProps) {
   const navigate = useNavigate();
 
   if (!correoUsuario) {
@@ -21,6 +21,14 @@ function MisPedidos({ pedidos, correoUsuario, cargando }: MisPedidosProps) {
         <button type="button" className="btn btn-primary" onClick={() => navigate("/login")}>
           Iniciar sesión
         </button>
+      </main>
+    );
+  }
+
+  if (cargando) {
+    return (
+      <main className="container py-5">
+        <p className="text-center text-muted">Cargando pedidos...</p>
       </main>
     );
   }
