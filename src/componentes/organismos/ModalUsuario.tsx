@@ -92,12 +92,17 @@ function ModalUsuario({
 
     if (esNuevo) {
       if (formulario.run.trim() === "") {
-        alert("El RUN es obligatorio.");
+        alert("El RUN es obligatorio. Ejemplo válido sin puntos ni guion: 123456785.");
+        return;
+      }
+
+      if (/[.\s-]/.test(formulario.run.trim())) {
+        alert("El RUN no debe contener puntos ni guion. Ejemplo válido: 123456785.");
         return;
       }
 
       if (!validarRun(formulario.run.trim().toUpperCase())) {
-        alert("RUN inválido. Debe ser sin puntos y con guion.");
+        alert("RUN inválido. Escribe los 7 u 8 números seguidos del dígito verificador, sin puntos ni guion.");
         return;
       }
 
@@ -112,28 +117,41 @@ function ModalUsuario({
       }
     }
 
-    if (esNuevo && (formulario.claveInicial.length < 8 || formulario.claveInicial.length > 72)) {
-      alert("La contraseña inicial debe tener entre 8 y 72 caracteres.");
+    if (esNuevo && (formulario.claveInicial.length < 4 || formulario.claveInicial.length > 10)) {
+      alert("La contraseña inicial debe tener entre 4 y 10 caracteres.");
       return;
     }
 
-    if (!esNuevo && formulario.claveInicial && (formulario.claveInicial.length < 8 || formulario.claveInicial.length > 72)) {
-      alert("La nueva contraseña debe tener entre 8 y 72 caracteres.");
+    if (!esNuevo && formulario.claveInicial && (formulario.claveInicial.length < 4 || formulario.claveInicial.length > 10)) {
+      alert("La nueva contraseña debe tener entre 4 y 10 caracteres.");
       return;
     }
 
     if (formulario.nombre.trim().length < 3) {
-      alert("El nombre debe tener al menos 3 caracteres.");
+      alert("El nombre debe tener al menos 3 caracteres y máximo 50.");
+      return;
+    }
+    if (formulario.nombre.trim().length > 50) {
+      alert("El nombre debe tener como máximo 50 caracteres.");
       return;
     }
 
     if (formulario.apellidos.trim().length < 3) {
-      alert("Los apellidos deben tener al menos 3 caracteres.");
+      alert("Los apellidos deben tener al menos 3 caracteres y máximo 100.");
+      return;
+    }
+    if (formulario.apellidos.trim().length > 100) {
+      alert("Los apellidos deben tener como máximo 100 caracteres.");
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      alert("Ingresa un correo electrónico válido.");
+      alert("El correo no tiene un formato válido. Ejemplo: nombre@correo.cl");
+      return;
+    }
+
+    if (email.length > 100) {
+      alert("El correo debe tener como máximo 100 caracteres.");
       return;
     }
 
@@ -230,7 +248,7 @@ function ModalUsuario({
 
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoFormulario etiqueta="RUN" tipo="text" nombre="run" valor={formulario.run} alCambiar={(valor) => cambiar("run", valor)} />
+          <CampoFormulario etiqueta="RUN (sin puntos ni guion)" tipo="text" nombre="run" valor={formulario.run} alCambiar={(valor) => cambiar("run", valor)} maximoCaracteres={9} marcador="Ejemplo: 123456785" />
         </div>
 
         <div className="col-12 col-md-6">
@@ -240,23 +258,25 @@ function ModalUsuario({
 
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoFormulario etiqueta="Nombre" tipo="text" nombre="nombre" valor={formulario.nombre} alCambiar={(valor) => cambiar("nombre", valor)} />
+          <CampoFormulario etiqueta="Nombre" tipo="text" nombre="nombre" valor={formulario.nombre} alCambiar={(valor) => cambiar("nombre", valor)} maximoCaracteres={50} />
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoFormulario etiqueta="Apellidos" tipo="text" nombre="apellidos" valor={formulario.apellidos} alCambiar={(valor) => cambiar("apellidos", valor)} />
+          <CampoFormulario etiqueta="Apellidos" tipo="text" nombre="apellidos" valor={formulario.apellidos} alCambiar={(valor) => cambiar("apellidos", valor)} maximoCaracteres={100} />
         </div>
       </div>
 
-      <CampoFormulario etiqueta="Correo electrónico" tipo="email" nombre="email" valor={formulario.email} alCambiar={(valor) => cambiar("email", valor)} />
+      <CampoFormulario etiqueta="Correo electrónico" tipo="email" nombre="email" valor={formulario.email} alCambiar={(valor) => cambiar("email", valor)} maximoCaracteres={100} />
 
       {formulario.rol !== "Cliente" && (
         <CampoFormulario
-          etiqueta={esNuevo ? "Contraseña inicial (8 a 72 caracteres)" : "Nueva contraseña (opcional)"}
+          etiqueta={esNuevo ? "Contraseña inicial (4 a 10 caracteres)" : "Nueva contraseña (opcional, 4 a 10 caracteres)"}
           tipo="password"
           nombre="claveInicial"
           valor={formulario.claveInicial}
           alCambiar={(valor) => cambiar("claveInicial", valor)}
+          longitudMinima={4}
+          maximoCaracteres={10}
         />
       )}
 

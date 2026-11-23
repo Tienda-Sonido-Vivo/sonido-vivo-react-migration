@@ -22,14 +22,18 @@ function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
     const correoLimpio = correo.trim().toLowerCase();
 
     if (!correoLimpio || !clave) {
-      alert("Debe completar todos los campos.");
+      alert("Completa el correo y la contraseña.");
+      return;
+    }
+    if (correoLimpio.length > 100) {
+      alert("El correo debe tener como máximo 100 caracteres.");
       return;
     }
 
     const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formatoCorreo.test(correoLimpio)) {
-      alert("Ingrese un correo válido.");
+      alert("El correo no tiene un formato válido. Ejemplo: nombre@correo.cl");
       return;
     }
 
@@ -63,6 +67,7 @@ function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
         nombre="correo"
         valor={correo}
         alCambiar={setCorreo}
+        maximoCaracteres={100}
       />
 
       <CampoFormulario
@@ -71,6 +76,8 @@ function FormularioLogin({ onIniciarSesion }: FormularioLoginProps) {
         nombre="clave"
         valor={clave}
         alCambiar={setClave}
+        longitudMinima={4}
+        maximoCaracteres={10}
       />
 
       <div className="d-grid gap-2 mt-4">

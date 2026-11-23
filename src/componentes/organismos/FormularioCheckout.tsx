@@ -43,6 +43,11 @@ function FormularioCheckout({
   const [codigoPostal, setCodigoPostal] = useState("");
   const [metodoEntrega, setMetodoEntrega] = useState<MetodoEntrega>("despacho");
   const [metodoPago, setMetodoPago] = useState<MetodoPago>("debito");
+  const [titularTarjeta, setTitularTarjeta] = useState("");
+  const [numeroTarjeta, setNumeroTarjeta] = useState("");
+  const [vencimientoTarjeta, setVencimientoTarjeta] = useState("");
+  const [cvvTarjeta, setCvvTarjeta] = useState("");
+  const [claveInternet, setClaveInternet] = useState("");
   const [enviando, setEnviando] = useState(false);
 
   const comunasDisponibles = region ? regionesComunas[region] ?? [] : [];
@@ -86,6 +91,38 @@ function FormularioCheckout({
 
       if (codigoPostal.trim() && !/^\d{7}$/.test(codigoPostal.trim())) {
         return "El código postal debe contener 7 números.";
+      }
+    }
+
+    if (metodoPago === "debito" || metodoPago === "credito") {
+      if (!titularTarjeta.trim()) {
+        return "Ingresa el nombre del titular exactamente como aparece en la tarjeta.";
+      }
+
+      if (!/^\d{16}$/.test(numeroTarjeta)) {
+        return "El número de tarjeta debe contener exactamente 16 dígitos.";
+      }
+
+      if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(vencimientoTarjeta)) {
+        return "El vencimiento debe usar el formato MM/AA, por ejemplo 12/29.";
+      }
+
+      const [mes, anio] = vencimientoTarjeta.split("/");
+      const anioActual = new Date().getFullYear();
+      const mesActual = new Date().getMonth() + 1;
+      const vencimientoAnterior =
+        2000 + Number(anio) < anioActual ||
+        (2000 + Number(anio) === anioActual && Number(mes) < mesActual);
+      if (vencimientoAnterior) {
+        return "La tarjeta está vencida. Ingresa una fecha vigente con formato MM/AA.";
+      }
+
+      if (!/^\d{3,4}$/.test(cvvTarjeta)) {
+        return "El CVV debe tener 3 o 4 dígitos, por ejemplo 123.";
+      }
+
+      if (claveInternet.length < 4 || claveInternet.length > 10) {
+        return "La clave de Internet debe tener entre 4 y 10 caracteres.";
       }
     }
 
@@ -291,9 +328,82 @@ function FormularioCheckout({
             <option value="klap">Klap</option>
           </select>
 
-          <div className="alert alert-info mt-3 mb-0">
-            Esta versión académica registra el método de pago seleccionado, pero no procesa transacciones reales ni solicita ni almacena datos de tarjetas.
-          </div>
+          {(metodoPago === "debito" || metodoPago === "credito") && (
+            <div className="mt-3">
+              <div className="alert alert-warning py-2">
+                Datos de prueba solamente. No uses una tarjeta real ni se almacenan estos datos.
+              </div>
+
+              <div className="row">
+                <div className="col-12">
+                  <CampoFormulario
+                    etiqueta="Nombre del titular *"
+                    tipo="text"
+                    nombre="titularTarjeta"
+                    valor={titularTarjeta}
+                    alCambiar={setTitularTarjeta}
+                    maximoCaracteres={100}
+                    marcador="Ejemplo: Ana Martínez"
+                  />
+                </div>
+
+                <div className="col-12 col-md-6">
+                  <CampoFormulario
+                    etiqueta="Número de tarjeta *"
+                    tipo="text"
+                    nombre="numeroTarjeta"
+                    valor={numeroTarjeta}
+                    alCambiar={(valor) => setNumeroTarjeta(valor.replace(/\D/g, "").slice(0, 16))}
+                    maximoCaracteres={16}
+                    marcador="16 dígitos"
+                  />
+                </div>
+
+                <div className="col-6 col-md-3">
+                  <CampoFormulario
+                    etiqueta="Vencimiento *"
+                    tipo="text"
+                    nombre="vencimientoTarjeta"
+                    valor={vencimientoTarjeta}
+                    alCambiar={(valor) => setVencimientoTarjeta(valor.replace(/[^\d/]/g, "").slice(0, 5))}
+                    maximoCaracteres={5}
+                    marcador="MM/AA"
+                  />
+                </div>
+
+                <div className="col-6 col-md-3">
+                  <CampoFormulario
+                    etiqueta="CVV *"
+                    tipo="password"
+                    nombre="cvvTarjeta"
+                    valor={cvvTarjeta}
+                    alCambiar={(valor) => setCvvTarjeta(valor.replace(/\D/g, "").slice(0, 4))}
+                    maximoCaracteres={4}
+                    marcador="3 o 4 dígitos"
+                  />
+                </div>
+
+                <div className="col-12">
+                  <CampoFormulario
+                    etiqueta="Clave de Internet *"
+                    tipo="password"
+                    nombre="claveInternet"
+                    valor={claveInternet}
+                    alCambiar={setClaveInternet}
+                    longitudMinima={4}
+                    maximoCaracteres={10}
+                    marcador="4 a 10 caracteres"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {(metodoPago === "transbank" || metodoPago === "klap") && (
+            <div className="alert alert-info mt-3 mb-0">
+              Serás redirigido a un proveedor simulado. Esta versión académica no solicita ni almacena datos bancarios reales.
+            </div>
+          )}
         </div>
       </div>
 

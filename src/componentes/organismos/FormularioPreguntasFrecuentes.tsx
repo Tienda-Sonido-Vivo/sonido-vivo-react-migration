@@ -18,7 +18,7 @@ function FormularioPreguntasFrecuentes() {
     const preguntaLimpia = pregunta.trim();
 
     if (!nombreLimpio || !correoLimpio || !preguntaLimpia) {
-      alert("Debe completar todos los campos.");
+      alert("Completa el nombre, el correo y la pregunta.");
       return;
     }
 
@@ -28,7 +28,7 @@ function FormularioPreguntasFrecuentes() {
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoLimpio) || correoLimpio.length > 100) {
-      alert("Ingrese un correo válido.");
+      alert("El correo debe tener formato válido y máximo 100 caracteres. Ejemplo: nombre@correo.cl");
       return;
     }
 
@@ -60,9 +60,9 @@ function FormularioPreguntasFrecuentes() {
 
   return (
     <form onSubmit={manejarEnvio} noValidate>
-      <CampoFormulario etiqueta="Nombre *" tipo="text" nombre="nombrePregunta" valor={nombre} alCambiar={setNombre} />
-      <CampoFormulario etiqueta="Correo electrónico *" tipo="email" nombre="correoPregunta" valor={correo} alCambiar={setCorreo} />
-      <CampoFormulario etiqueta="Tu pregunta *" tipo="text" nombre="pregunta" valor={pregunta} alCambiar={setPregunta} />
+      <CampoFormulario etiqueta="Nombre *" tipo="text" nombre="nombrePregunta" valor={nombre} alCambiar={setNombre} maximoCaracteres={100} />
+      <CampoFormulario etiqueta="Correo electrónico *" tipo="email" nombre="correoPregunta" valor={correo} alCambiar={setCorreo} maximoCaracteres={100} />
+      <CampoFormulario etiqueta="Tu pregunta *" tipo="text" nombre="pregunta" valor={pregunta} alCambiar={setPregunta} maximoCaracteres={500} />
 
       <button
         type="submit"

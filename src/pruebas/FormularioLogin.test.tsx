@@ -40,6 +40,8 @@ test("FormularioLogin muestra un error cuando el correo tiene un formato inváli
   fireEvent.change(campoClave, { target: { value: "ClaveSegura123" } });
   fireEvent.click(screen.getByRole("button", { name: "Ingresar" }));
 
-  expect(window.alert).toHaveBeenCalledWith("Ingrese un correo válido.");
+  expect(window.alert).toHaveBeenCalledWith(
+    "El correo no tiene un formato válido. Ejemplo: nombre@correo.cl",
+  );
   expect(onIniciarSesion).not.toHaveBeenCalled();
 });

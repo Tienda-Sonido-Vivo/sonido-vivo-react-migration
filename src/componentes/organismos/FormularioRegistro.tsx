@@ -48,8 +48,13 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
       return;
     }
 
+    if (/[.\s-]/.test(runLimpio)) {
+      alert("El RUN no debe contener puntos ni guion. Ejemplo válido: 123456785.");
+      return;
+    }
+
     if (!validarRun(runLimpio)) {
-      alert("RUN inválido. Ingresa un RUT chileno válido.");
+      alert("RUN inválido. Escribe el RUN sin puntos ni guion y con dígito verificador correcto. Ejemplo válido: 123456785.");
       return;
     }
 
@@ -57,7 +62,19 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
     const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formatoCorreo.test(emailLimpio)) {
-      alert("Ingrese un correo electrónico válido.");
+      alert("El correo no tiene un formato válido. Ejemplo: nombre@correo.cl");
+      return;
+    }
+    if (emailLimpio.length > 100) {
+      alert("El correo debe tener como máximo 100 caracteres.");
+      return;
+    }
+    if (nombre.trim().length > 50) {
+      alert("El nombre debe tener como máximo 50 caracteres.");
+      return;
+    }
+    if (apellidos.trim().length > 100) {
+      alert("Los apellidos deben tener como máximo 100 caracteres.");
       return;
     }
 
@@ -73,7 +90,7 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
     }
 
     if (clave.length < 4 || clave.length > 10) {
-      alert("La contraseña debe tener entre 4 y 10 caracteres.");
+      alert("La contraseña debe tener entre 4 y 10 caracteres, por ejemplo: 1234 o demo123.");
       return;
     }
 
@@ -117,6 +134,8 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
         nombre="run"
         valor={run}
         alCambiar={setRun}
+        maximoCaracteres={9}
+        marcador="Ejemplo: 123456785"
       />
 
       <div className="row">
@@ -127,6 +146,7 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
             nombre="nombre"
             valor={nombre}
             alCambiar={setNombre}
+            maximoCaracteres={50}
           />
         </div>
 
@@ -137,6 +157,7 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
             nombre="apellidos"
             valor={apellidos}
             alCambiar={setApellidos}
+            maximoCaracteres={100}
           />
         </div>
       </div>
@@ -147,6 +168,7 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
         nombre="email"
         valor={email}
         alCambiar={setEmail}
+        maximoCaracteres={100}
       />
 
       <CampoFormulario
@@ -213,6 +235,9 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
         nombre="clave"
         valor={clave}
         alCambiar={setClave}
+        longitudMinima={4}
+        maximoCaracteres={10}
+        marcador="4 a 10 caracteres"
       />
 
       <CampoFormulario
@@ -221,6 +246,8 @@ function FormularioRegistro({ onRegistrarUsuario }: FormularioRegistroProps) {
         nombre="confirmarClave"
         valor={confirmarClave}
         alCambiar={setConfirmarClave}
+        longitudMinima={4}
+        maximoCaracteres={10}
       />
 
       <div className="d-grid mt-4">

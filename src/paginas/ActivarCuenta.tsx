@@ -26,7 +26,7 @@ function ActivarCuenta() {
     }
 
     if (nuevaClave.length < 4 || nuevaClave.length > 10) {
-      setMensaje("La nueva contraseña debe tener entre 4 y 10 caracteres.");
+      setMensaje("La nueva contraseña debe tener entre 4 y 10 caracteres. Ejemplo válido: demo123.");
       return;
     }
 
@@ -87,6 +87,8 @@ function ActivarCuenta() {
                 nombre="nuevaClave"
                 valor={nuevaClave}
                 alCambiar={setNuevaClave}
+                longitudMinima={4}
+                maximoCaracteres={10}
               />
 
               <CampoFormulario
@@ -95,6 +97,8 @@ function ActivarCuenta() {
                 nombre="confirmarClave"
                 valor={confirmarClave}
                 alCambiar={setConfirmarClave}
+                longitudMinima={4}
+                maximoCaracteres={10}
               />
 
               <div className="d-grid gap-2 mt-4">

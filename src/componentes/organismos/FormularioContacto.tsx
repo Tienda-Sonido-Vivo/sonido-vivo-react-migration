@@ -18,7 +18,7 @@ function FormularioContacto() {
     const mensajeLimpio = mensaje.trim();
 
     if (!nombreLimpio || !correoLimpio || !mensajeLimpio) {
-      alert("Debe completar todos los campos.");
+      alert("Completa el nombre, el correo y el comentario.");
       return;
     }
 
@@ -28,7 +28,7 @@ function FormularioContacto() {
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoLimpio) || correoLimpio.length > 100) {
-      alert("Ingrese un correo válido.");
+      alert("El correo debe tener formato válido y máximo 100 caracteres. Ejemplo: nombre@correo.cl");
       return;
     }
 
@@ -60,9 +60,9 @@ function FormularioContacto() {
 
   return (
     <form onSubmit={manejarEnvio} noValidate>
-      <CampoFormulario etiqueta="Nombre completo" tipo="text" nombre="nombre" valor={nombre} alCambiar={setNombre} />
-      <CampoFormulario etiqueta="Correo electrónico" tipo="email" nombre="correo" valor={correo} alCambiar={setCorreo} />
-      <CampoFormulario etiqueta="Mensaje" tipo="text" nombre="mensaje" valor={mensaje} alCambiar={setMensaje} />
+      <CampoFormulario etiqueta="Nombre completo *" tipo="text" nombre="nombre" valor={nombre} alCambiar={setNombre} maximoCaracteres={100} />
+      <CampoFormulario etiqueta="Correo electrónico" tipo="email" nombre="correo" valor={correo} alCambiar={setCorreo} maximoCaracteres={100} />
+      <CampoFormulario etiqueta="Comentario *" tipo="text" nombre="mensaje" valor={mensaje} alCambiar={setMensaje} maximoCaracteres={500} />
 
       <button
         type="submit"
