@@ -11,7 +11,8 @@ import {
     render,
     screen,
     fireEvent,
-    cleanup
+    cleanup,
+    waitFor
 } from "@testing-library/react";
 
 import {
@@ -82,6 +83,7 @@ test("DetalleProducto muestra correctamente el producto recibido mediante props"
                             onAgregarCarrito={
                                 onAgregarCarrito
                             }
+                            cargando={false}
                         />
                     }
                 />
@@ -120,7 +122,7 @@ test("DetalleProducto muestra correctamente el producto recibido mediante props"
 });
 
 
-test("DetalleProducto llama a onAgregarCarrito al agregar un producto", () => {
+test("DetalleProducto llama a onAgregarCarrito al agregar un producto", async () => {
 
     const productoPrueba: Producto = {
 
@@ -170,6 +172,7 @@ test("DetalleProducto llama a onAgregarCarrito al agregar un producto", () => {
                             onAgregarCarrito={
                                 onAgregarCarrito
                             }
+                            cargando={false}
                         />
                     }
                 />
@@ -201,10 +204,10 @@ test("DetalleProducto llama a onAgregarCarrito al agregar un producto", () => {
     ).toHaveBeenCalledTimes(1);
 
 
-    expect(
-        window.alert
-    ).toHaveBeenCalledWith(
-        '"Bajo Eléctrico 4 Cuerdas" fue agregado al carrito.'
-    );
+    await waitFor(() => {
+        expect(window.alert).toHaveBeenCalledWith(
+            '"Bajo Eléctrico 4 Cuerdas" fue agregado al carrito.'
+        );
+    });
 
 });

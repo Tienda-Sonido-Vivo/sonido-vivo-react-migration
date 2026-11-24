@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -29,7 +28,7 @@ import {
   obtenerPedidosAdministracion,
   actualizarEstadoPedido,
 } from "../servicios/pedidosServicio";
-import { confirmarPagoPedido } from "../servicios/pagosServicio";
+import { procesarPagoPedido } from "../servicios/pagosServicio";
 import {
   obtenerUsuarios,
   crearUsuario,
@@ -165,7 +164,7 @@ export function useAppData() {
   }, []);
 
   useEffect(() => {
-    void cargarCatalogo();
+    void Promise.resolve().then(() => cargarCatalogo());
   }, [cargarCatalogo]);
 
   useEffect(() => {
@@ -175,7 +174,7 @@ export function useAppData() {
       setCorreoUsuario(usuario?.email ?? "");
 
       if (!usuario) {
-        const habiaSesion = correoCarritoSincronizado.current !== null || correoUsuario !== "";
+        const habiaSesion = correoCarritoSincronizado.current !== null || obtenerCorreo() !== "";
 
         correoCarritoSincronizado.current = null;
 
@@ -312,8 +311,13 @@ export function useAppData() {
 
     try {
       const pedido = await crearPedido(datos);
-
       setPedidosState((actuales) => [pedido, ...actuales]);
+      await procesarPagoPedido(pedido.codigo);
+
+      setPedidosState((actuales) => [
+        { ...pedido, pagado: true },
+        ...actuales.filter((actual) => actual.codigo !== pedido.codigo),
+      ]);
       setCarrito([]);
       await cargarCatalogo();
 
@@ -326,8 +330,6 @@ export function useAppData() {
 
   const setProductosDisponibles = (nuevos: Producto[]) => {
     const anteriores = productosDisponibles;
-    const rol = obtenerUsuarioSesion()?.rol;
-
     setProductosDisponiblesState(nuevos);
 
     void (async () => {
@@ -346,10 +348,6 @@ export function useAppData() {
             }
 
             continue;
-          }
-
-          if (rol === "Vendedor") {
-            throw new Error("El vendedor solamente puede actualizar el stock.");
           }
 
           await actualizarProducto(producto);
@@ -407,19 +405,7 @@ export function useAppData() {
     })();
   };
 
-  const confirmarPago = async (codigoPedido: string): Promise<boolean> => {
-    try {
-      await confirmarPagoPedido(codigoPedido);
-      const actualizados = await obtenerPedidosAdministracion();
-      setPedidosState(actualizados);
-      return true;
-    } catch (error) {
-      alert(error instanceof Error ? error.message : "No fue posible confirmar el pago.");
-      return false;
-    }
-  };
-
-  const setUsuarios = (nuevos: Usuario[]) => {
+  const setUsuarios = (nuevos: Usuario[], claveInicial?: string) => {
     const anteriores = usuarios;
     setUsuariosState(nuevos);
 
@@ -429,17 +415,14 @@ export function useAppData() {
           const anterior = anteriores.find((actual) => actual.run === usuario.run);
 
           if (!anterior) {
-            const resultado = await crearUsuario(usuario);
-            alert(
-              `Usuario creado. Entrega este token de activación una sola vez: ${resultado.tokenActivacion}`,
-            );
+            await crearUsuario(usuario, claveInicial ?? "");
             continue;
           }
 
           const cambio = JSON.stringify(anterior) !== JSON.stringify(usuario);
 
           if (cambio) {
-            await actualizarUsuario(usuario);
+            await actualizarUsuario(usuario, claveInicial);
           }
         }
 
@@ -471,7 +454,6 @@ export function useAppData() {
     setUsuarios,
     setProductosDisponibles,
     setPedidos,
-    confirmarPago,
     cargarCatalogo,
     cargarDatosUsuario,
   };

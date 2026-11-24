@@ -7,6 +7,7 @@ export const pedidosIniciales: Pedido[] = [
     fecha: "05 de septiembre de 2026",
     fechaISO: "2026-09-05T00:00:00Z",
     estado: "Entregado",
+    pagado: true,
     productos: [
       {
         codigo: "GA001",
@@ -45,6 +46,7 @@ export const pedidosIniciales: Pedido[] = [
     fecha: "08 de septiembre de 2026",
     fechaISO: "2026-09-08T00:00:00Z",
     estado: "Despachado",
+    pagado: true,
     productos: [
       {
         codigo: "BA002",
@@ -77,6 +79,7 @@ export const pedidosIniciales: Pedido[] = [
     fecha: "12 de septiembre de 2026",
     fechaISO: "2026-09-12T00:00:00Z",
     estado: "En preparación",
+    pagado: true,
     productos: [
       {
         codigo: "BT003",

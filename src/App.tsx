@@ -26,7 +26,6 @@ import Contacto from "./paginas/Contacto";
 import Novedades from "./paginas/Novedades";
 import NovedadDetalle from "./paginas/NovedadDetalle";
 import PreguntasFrecuentes from "./paginas/PreguntasFrecuentes";
-import ActivarCuenta from "./paginas/ActivarCuenta";
 
 import InicioAdmin from "./paginas/admin/InicioAdmin";
 import GestionUsuarios from "./paginas/admin/GestionUsuarios";
@@ -58,7 +57,6 @@ function App() {
     setUsuarios,
     setProductosDisponibles,
     setPedidos,
-    confirmarPago,
   } = useAppData();
 
   return (
@@ -104,8 +102,6 @@ function App() {
           path="/registro"
           element={<Registro onRegistrarUsuario={registrarUsuario} />}
         />
-
-        <Route path="/activar-cuenta" element={<ActivarCuenta />} />
 
         <Route
           path="/carrito"
@@ -189,7 +185,6 @@ function App() {
               <GestionPedidos
                 pedidos={pedidos}
                 onCambiarPedidos={setPedidos}
-                onConfirmarPago={confirmarPago}
               />
             }
           />
@@ -208,6 +203,7 @@ function App() {
             />
 
             <Route path="ventas" element={<VentasAdmin />} />
+
           </Route>
         </Route>
       </Route>

@@ -1,41 +1,30 @@
+import { useCallback, useEffect, useState } from "react";
 
-/*
-NOTA:
-
-ESTA PAGINA NO CORRESPONDE AL PROYECTO ORIGINAL. ES PARTe  DEL PROYECTO FRONTEND
-DE EJEMPLO QUE EL PROFESOR UTILIZÓ PARA MOSTRARNOS COMO UNA PAGINA 
-PUEDE RECIBIR INFORMACIÓN DE SU RESPECTIVO BACKEND
-
-TENEMOS QUE IMPLEMENTAR ESTA PAGINA A SONIDO VIVO. ADAPNTANDOLO A SU ESTILO.
-EVIDENTEMENTE, HABRÁ QUE IMPLEMENTAR ESTA PAGINA EN ALGUNO DE LOS MENÚS
-COMO EN LAS RUTAS.
-
-SUGERIMOS QUE, PARA NUSTRO PROYECTO, SE INTEGRÉ ESTA PÁGINA EN EL MODAL DEL ADMINISTRADOR,
-ES DECIR, COMO UNA OPCIÓN EN SU PANEL DE ADMINISTRACIÓN, EN SU MENÚ IZQUIERDO.
-
-ESE MENÚ IZQUIERDO SE ENCUENTRA EN LA CARPETA COMPONENTES/ORGANISMOS
-Y SE LLAMA "SiderbarAdmin"
-
-*/
-
-import { useEffect, useState } from "react";
 import {
   actualizarRevisionMensaje,
   obtenerMensajes,
-  type Mensaje,
 } from "../servicios/mensajeriaServicio";
+import type { Mensaje } from "../servicios/mensajeriaServicio";
 
 function ListadoContactos() {
-  const [contactos, setContactos] = useState<Mensaje[]>([]);
+  const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState("");
+
+  const cargarMensajes = useCallback(async () => {
+    setCargando(true);
+
+    try {
+      setMensajes(await obtenerMensajes());
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "No se pudieron cargar los mensajes.");
+    } finally {
+      setCargando(false);
+    }
+  }, []);
 
   useEffect(() => {
-    obtenerMensajes()
-      .then(setContactos)
-      .catch(() => setError("No se pudieron cargar los mensajes."))
-      .finally(() => setCargando(false));
-  }, []);
+    void Promise.resolve().then(() => cargarMensajes());
+  }, [cargarMensajes]);
 
   const cambiarRevision = async (mensaje: Mensaje) => {
     try {
@@ -43,44 +32,78 @@ function ListadoContactos() {
         mensaje.id,
         !mensaje.revisado,
       );
-      setContactos((actuales) =>
+
+      setMensajes((actuales) =>
         actuales.map((actual) =>
           actual.id === actualizado.id ? actualizado : actual,
         ),
       );
-    } catch {
-      setError("No se pudo actualizar el estado del mensaje.");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "No se pudo actualizar el mensaje.");
     }
   };
 
   return (
-    <>
-      <h1>Mensajes recibidos</h1>
-      {cargando && <p>Cargando mensajes...</p>}
-      {error !== "" && <div className="alert alert-danger">{error}</div>}
-      {!cargando && contactos.length === 0 && (
-        <p className="text-muted">No hay mensajes para mostrar.</p>
+    <section>
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div>
+          <h1 className="mb-0">Mensajes recibidos</h1>
+          <p className="text-muted mb-0">
+            Consultar y marcar los mensajes enviados desde el sitio público.
+          </p>
+        </div>
+
+        <button type="button" className="btn btn-outline-primary" onClick={() => void cargarMensajes()}>
+          Actualizar
+        </button>
+      </div>
+
+      {cargando ? (
+        <p className="text-muted">Cargando mensajes...</p>
+      ) : mensajes.length === 0 ? (
+        <div className="alert alert-info">Todavía no se han recibido mensajes.</div>
+      ) : (
+        <div className="row g-3">
+          {mensajes.map((mensaje) => (
+            <div className="col-12" key={mensaje.id}>
+              <article className="card border-0 shadow-sm">
+                <div className="card-body">
+                  <div className="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                    <div>
+                      <h2 className="h5 mb-1">{mensaje.nombreCompleto}</h2>
+                      <p className="text-muted mb-0">{mensaje.correo}</p>
+                    </div>
+
+                    <div className="d-flex gap-2 align-items-center">
+                      <span className="badge text-bg-secondary">{mensaje.tipoMensaje}</span>
+                      <span className={mensaje.revisado ? "badge text-bg-success" : "badge text-bg-warning"}>
+                        {mensaje.revisado ? "Revisado" : "Pendiente"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="mb-2">{mensaje.mensaje}</p>
+
+                  <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <small className="text-muted">
+                      Remitente: {mensaje.tipoRemitente} · {new Date(mensaje.fechaCreacion).toLocaleString("es-CL")}
+                    </small>
+
+                    <button
+                      type="button"
+                      className={mensaje.revisado ? "btn btn-outline-secondary btn-sm" : "btn btn-success btn-sm"}
+                      onClick={() => void cambiarRevision(mensaje)}
+                    >
+                      {mensaje.revisado ? "Marcar pendiente" : "Marcar revisado"}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            </div>
+          ))}
+        </div>
       )}
-      {contactos.map((contacto) => (
-        <article className="card p-3 mb-3" key={contacto.id}>
-          <div className="d-flex justify-content-between gap-3">
-            <h2 className="h5">{contacto.nombreCompleto}</h2>
-            <span className={"badge " + (contacto.revisado ? "text-bg-success" : "text-bg-warning")}>
-              {contacto.revisado ? "Revisado" : "Pendiente"}
-            </span>
-          </div>
-          <p className="mb-1">{contacto.correo}</p>
-          <p>{contacto.mensaje}</p>
-          <button
-            type="button"
-            className="btn btn-outline-primary btn-sm align-self-start"
-            onClick={() => void cambiarRevision(contacto)}
-          >
-            Marcar como {contacto.revisado ? "pendiente" : "revisado"}
-          </button>
-        </article>
-      ))}
-    </>
+    </section>
   );
 }
 

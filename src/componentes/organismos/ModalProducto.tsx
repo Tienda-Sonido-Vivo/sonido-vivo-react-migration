@@ -19,14 +19,9 @@ interface FormularioProducto {
 }
 
 interface ModalProductoProps {
-  // null = crear un producto nuevo
   producto: Producto | null;
-
   productos: Producto[];
-
   categorias: string[];
-
-  // true = el Vendedor solo puede modificar el stock
   soloStock: boolean;
 
   onGuardar: (producto: Producto, esNuevo: boolean) => void;

@@ -59,6 +59,7 @@ test("GestionProductos muestra correctamente la lista de productos recibidos por
     <MemoryRouter>
       <GestionProductos
         productos={productosPrueba}
+        categorias={["Guitarras Acústicas", "Bajos Eléctricos"]}
         onCambiarProductos={onCambiarProductos}
       />
     </MemoryRouter>,
@@ -81,6 +82,7 @@ test("GestionProductos filtra la lista de productos según el texto ingresado en
     <MemoryRouter>
       <GestionProductos
         productos={productosPrueba}
+        categorias={["Guitarras Acústicas", "Bajos Eléctricos"]}
         onCambiarProductos={onCambiarProductos}
       />
     </MemoryRouter>,
@@ -109,6 +111,7 @@ test("GestionProductos llama a onCambiarProductos al eliminar un producto", () =
     <MemoryRouter>
       <GestionProductos
         productos={productosPrueba}
+        categorias={["Guitarras Acústicas", "Bajos Eléctricos"]}
         onCambiarProductos={onCambiarProductos}
       />
     </MemoryRouter>,
@@ -134,6 +137,7 @@ test("GestionProductos abre el modal y llama a onCambiarProductos al guardar un 
     <MemoryRouter>
       <GestionProductos
         productos={productosPrueba}
+        categorias={["Guitarras Acústicas", "Bajos Eléctricos"]}
         onCambiarProductos={onCambiarProductos}
       />
     </MemoryRouter>
@@ -177,6 +181,7 @@ test("GestionProductos llama a onCambiarProductos al editar un producto existent
     <MemoryRouter>
       <GestionProductos
         productos={productosPrueba}
+        categorias={["Guitarras Acústicas", "Bajos Eléctricos"]}
         onCambiarProductos={onCambiarProductos}
       />
     </MemoryRouter>

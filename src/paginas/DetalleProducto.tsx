@@ -10,13 +10,14 @@ import AcordeonProducto from "../componentes/organismos/AcordeonProducto";
 
 interface DetalleProductoProps {
   productos: Producto[];
-
-  onAgregarCarrito: (codigo: string, cantidad: number) => void;
+  onAgregarCarrito: (codigo: string, cantidad: number) => Promise<boolean> | boolean | void;
+  cargando?: boolean;
 }
 
 function DetalleProducto({
   productos,
   onAgregarCarrito,
+  cargando = false,
 }: DetalleProductoProps) {
   const { codigo } = useParams();
 
@@ -25,8 +26,23 @@ function DetalleProducto({
   const producto = productos.find(
     (productoActual) => productoActual.codigo === codigo,
   );
-
   const [cantidad, setCantidad] = useState(1);
+
+  if (cargando) {
+    return (
+      <main className="container mt-5 mb-5">
+        <p className="text-center text-muted">Cargando producto...</p>
+      </main>
+    );
+  }
+
+  if (!producto && cargando) {
+    return (
+      <main className="container py-5">
+        <p className="text-center text-muted">Cargando producto...</p>
+      </main>
+    );
+  }
 
   if (!producto) {
     return (
@@ -59,10 +75,8 @@ function DetalleProducto({
   };
 
   const agregarAlCarrito = () => {
-    onAgregarCarrito(producto.codigo, cantidad);
-
+    void onAgregarCarrito(producto.codigo, cantidad);
     alert(`"${producto.nombre}" fue agregado al carrito.`);
-
     navigate("/carrito");
   };
 

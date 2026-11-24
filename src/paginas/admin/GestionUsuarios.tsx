@@ -19,7 +19,7 @@ interface EstadoModal {
 interface GestionUsuariosProps {
   usuarios: Usuario[];
 
-  onCambiarUsuarios: (usuarios: Usuario[]) => void;
+  onCambiarUsuarios: (usuarios: Usuario[], claveInicial?: string) => void;
 }
 
 function GestionUsuarios({
@@ -36,8 +36,8 @@ function GestionUsuarios({
 
   const cerrarModal = useCallback(() => setModal(null), []);
 
-  const actualizarUsuarios = (nuevos: Usuario[]) => {
-    onCambiarUsuarios(nuevos);
+  const actualizarUsuarios = (nuevos: Usuario[], claveInicial?: string) => {
+    onCambiarUsuarios(nuevos, claveInicial);
   };
 
   const correoActual = obtenerCorreo().toLowerCase();
@@ -45,14 +45,15 @@ function GestionUsuarios({
   const esCuentaPropia = (usuario: Usuario) =>
     usuario.email.toLowerCase() === correoActual;
 
-  const guardar = (usuario: Usuario, esNuevo: boolean) => {
+  const guardar = (usuario: Usuario, esNuevo: boolean, claveInicial?: string) => {
     if (esNuevo) {
-      actualizarUsuarios([...usuarios, usuario]);
+      actualizarUsuarios([...usuarios, usuario], claveInicial);
 
       setMensaje(`Usuario ${usuario.nombre} creado correctamente.`);
     } else {
       actualizarUsuarios(
         usuarios.map((u) => (u.run === usuario.run ? usuario : u)),
+        claveInicial,
       );
 
       setMensaje(`Usuario ${usuario.nombre} actualizado correctamente.`);

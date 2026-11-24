@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 import type { Usuario } from "../interfaces/Usuario";
 import { apiRequest } from "./api";
@@ -17,12 +16,6 @@ interface UsuarioApiDTO {
   rol: "CLIENTE" | "VENDEDOR" | "ADMIN";
   estado: "ACTIVO" | "INACTIVO";
   auditoria: string[];
-  requiereActivacion: boolean;
-}
-
-interface ActivacionApiDTO {
-  tokenActivacion: string;
-  expiraEn: string;
 }
 
 function rolApi(rol: Usuario["rol"]): string {
@@ -56,26 +49,19 @@ export async function obtenerUsuarios(): Promise<Usuario[]> {
   return respuesta.map(adaptarUsuario);
 }
 
-export async function crearUsuario(usuario: Usuario): Promise<{ usuario: Usuario; tokenActivacion: string }> {
+export async function crearUsuario(usuario: Usuario, claveInicial: string): Promise<Usuario> {
   const creado = await apiRequest<UsuarioApiDTO>("/auth/usuarios", {
     method: "POST",
-    body: JSON.stringify(datosUsuario(usuario)),
+    body: JSON.stringify({
+      ...datosUsuario(usuario),
+      claveInicial,
+    }),
   });
 
-  const activacion = await apiRequest<ActivacionApiDTO>(
-    `/auth/usuarios/${encodeURIComponent(usuario.run)}/activacion`,
-    {
-      method: "POST",
-    },
-  );
-
-  return {
-    usuario: adaptarUsuario(creado),
-    tokenActivacion: activacion.tokenActivacion,
-  };
+  return adaptarUsuario(creado);
 }
 
-export async function actualizarUsuario(usuario: Usuario): Promise<Usuario> {
+export async function actualizarUsuario(usuario: Usuario, claveInicial?: string): Promise<Usuario> {
   const respuesta = await apiRequest<UsuarioApiDTO>(
     `/auth/usuarios/${encodeURIComponent(usuario.run)}`,
     {
@@ -90,6 +76,7 @@ export async function actualizarUsuario(usuario: Usuario): Promise<Usuario> {
         direccion: usuario.direccion,
         rol: rolApi(usuario.rol),
         estado: estadoApi(usuario.estado),
+        ...(claveInicial ? { claveInicial } : {}),
       }),
     },
   );
@@ -110,18 +97,6 @@ export async function cambiarEstadoUsuario(usuario: Usuario): Promise<Usuario> {
 
   return adaptarUsuario(respuesta);
 }
-
-export async function generarTokenActivacion(run: string): Promise<string> {
-  const respuesta = await apiRequest<ActivacionApiDTO>(
-    `/auth/usuarios/${encodeURIComponent(run)}/activacion`,
-    {
-      method: "POST",
-    },
-  );
-
-  return respuesta.tokenActivacion;
-}
-
 
 /*
 import type { Usuario } from "../interfaces/Usuario";

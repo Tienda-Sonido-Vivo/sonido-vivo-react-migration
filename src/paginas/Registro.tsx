@@ -1,16 +1,14 @@
-
 import { Link } from "react-router-dom";
 
 import FormularioRegistro from "../componentes/organismos/FormularioRegistro";
 
-import type { Usuario } from "../interfaces/Usuario";
+import type { DatosRegistroCliente } from "../servicios/authServicio";
 
 interface RegistroProps {
-  usuarios: Usuario[];
-  onRegistrarUsuario: (usuario: Usuario) => void;
+  onRegistrarUsuario: (datos: DatosRegistroCliente) => Promise<void>;
 }
 
-function Registro({ usuarios, onRegistrarUsuario }: RegistroProps) {
+function Registro({ onRegistrarUsuario }: RegistroProps) {
   return (
     <main className="container my-5">
       <div className="row justify-content-center">
@@ -23,7 +21,6 @@ function Registro({ usuarios, onRegistrarUsuario }: RegistroProps) {
             </p>
 
             <FormularioRegistro
-              usuarios={usuarios}
               onRegistrarUsuario={onRegistrarUsuario}
             />
 
@@ -43,4 +40,3 @@ function Registro({ usuarios, onRegistrarUsuario }: RegistroProps) {
 }
 
 export default Registro;
-

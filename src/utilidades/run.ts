@@ -17,12 +17,15 @@ export function calcularDigitoVerificador(cuerpo: string): string {
 }
 
 export function validarRun(run: string): boolean {
-  if (!/^\d{7,8}-[\dkK]$/.test(run)) {
+  const limpio = run.trim().replace(/^[\.\s]+|[\.\s]+$/g, "");
+  const plano = limpio.replace(/-/g, "");
+
+  if (!/^\d{7,8}[\dkK]$/i.test(plano)) {
     return false;
   }
 
-  const [cuerpo, dv] = run.split("-");
-
+  const cuerpo = plano.slice(0, -1);
+  const dv = plano.slice(-1);
   return calcularDigitoVerificador(cuerpo) === dv.toUpperCase();
 }
 

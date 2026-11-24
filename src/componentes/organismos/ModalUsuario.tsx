@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 import type { Usuario } from "../../interfaces/Usuario";
@@ -18,21 +17,16 @@ interface FormularioUsuario {
   region: string;
   comuna: string;
   direccion: string;
+  claveInicial: string;
   rol: Usuario["rol"];
   estado: Usuario["estado"];
 }
 
 interface ModalUsuarioProps {
-  // null = crear un usuario nuevo
   usuario: Usuario | null;
-
   usuarios: Usuario[];
-
-  // true = es la cuenta con la sesión iniciada (no puede quitarse su propio acceso)
   esCuentaPropia: boolean;
-
-  onGuardar: (usuario: Usuario, esNuevo: boolean) => void;
-
+  onGuardar: (usuario: Usuario, esNuevo: boolean, claveInicial?: string) => void;
   onCerrar: () => void;
 }
 
@@ -47,7 +41,8 @@ function formularioInicial(usuario: Usuario | null): FormularioUsuario {
       region: "",
       comuna: "",
       direccion: "",
-      rol: "Cliente",
+      claveInicial: "",
+      rol: "Vendedor",
       estado: "Activo",
     };
   }
@@ -61,6 +56,7 @@ function formularioInicial(usuario: Usuario | null): FormularioUsuario {
     region: usuario.region,
     comuna: usuario.comuna,
     direccion: usuario.direccion,
+    claveInicial: "",
     rol: usuario.rol,
     estado: usuario.estado,
   };
@@ -87,7 +83,6 @@ function ModalUsuario({
   };
 
   const cambiarRegion = (region: string) => {
-    // Al cambiar la región, la comuna anterior deja de ser válida
     setFormulario((anterior) => ({ ...anterior, region, comuna: "" }));
   };
 
@@ -97,38 +92,74 @@ function ModalUsuario({
 
     if (esNuevo) {
       if (formulario.run.trim() === "") {
-        alert("El RUN es obligatorio.");
+        alert("El RUN es obligatorio. Ejemplo válido sin puntos ni guion: 123456785.");
         return;
       }
+
+      if (/[.\s-]/.test(formulario.run.trim())) {
+        alert("El RUN no debe contener puntos ni guion. Ejemplo válido: 123456785.");
+        return;
+      }
+
       if (!validarRun(formulario.run.trim().toUpperCase())) {
-        alert("RUN inválido. Debe ser sin puntos y con guion (ej: 12345678-5).");
+        alert("RUN inválido. Escribe los 7 u 8 números seguidos del dígito verificador, sin puntos ni guion.");
         return;
       }
-      if (usuarios.some((u) => normalizarRun(u.run) === runNormalizado)) {
+
+      if (esNuevo && formulario.rol === "Cliente") {
+        alert("Las cuentas CLIENTE deben registrarse desde el formulario público.");
+        return;
+      }
+
+      if (usuarios.some((actual) => normalizarRun(actual.run) === runNormalizado)) {
         alert("Ya existe un usuario registrado con ese RUN.");
         return;
       }
     }
 
+    if (esNuevo && (formulario.claveInicial.length < 4 || formulario.claveInicial.length > 10)) {
+      alert("La contraseña inicial debe tener entre 4 y 10 caracteres.");
+      return;
+    }
+
+    if (!esNuevo && formulario.claveInicial && (formulario.claveInicial.length < 4 || formulario.claveInicial.length > 10)) {
+      alert("La nueva contraseña debe tener entre 4 y 10 caracteres.");
+      return;
+    }
+
     if (formulario.nombre.trim().length < 3) {
-      alert("El nombre debe tener al menos 3 caracteres.");
+      alert("El nombre debe tener al menos 3 caracteres y máximo 50.");
+      return;
+    }
+    if (formulario.nombre.trim().length > 50) {
+      alert("El nombre debe tener como máximo 50 caracteres.");
       return;
     }
 
     if (formulario.apellidos.trim().length < 3) {
-      alert("Los apellidos deben tener al menos 3 caracteres.");
+      alert("Los apellidos deben tener al menos 3 caracteres y máximo 100.");
+      return;
+    }
+    if (formulario.apellidos.trim().length > 100) {
+      alert("Los apellidos deben tener como máximo 100 caracteres.");
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      alert("Ingresa un correo electrónico válido.");
+      alert("El correo no tiene un formato válido. Ejemplo: nombre@correo.cl");
       return;
     }
+
+    if (email.length > 100) {
+      alert("El correo debe tener como máximo 100 caracteres.");
+      return;
+    }
+
     if (
       usuarios.some(
-        (u) =>
-          u.email.toLowerCase() === email.toLowerCase() &&
-          u.run !== usuario?.run,
+        (actual) =>
+          actual.email.toLowerCase() === email.toLowerCase() &&
+          actual.run !== usuario?.run,
       )
     ) {
       alert("Ya existe un usuario registrado con ese correo.");
@@ -143,17 +174,12 @@ function ModalUsuario({
       return;
     }
 
-    if (formulario.region === "") {
-      alert("Selecciona una región.");
+    if (!formulario.region || !formulario.comuna) {
+      alert("Selecciona una región y una comuna.");
       return;
     }
 
-    if (formulario.comuna === "") {
-      alert("Selecciona una comuna.");
-      return;
-    }
-
-    if (formulario.direccion.trim() === "") {
+    if (!formulario.direccion.trim()) {
       alert("La dirección es obligatoria.");
       return;
     }
@@ -162,14 +188,12 @@ function ModalUsuario({
     const auditoria = [...(usuario?.auditoria ?? [])];
 
     if (esNuevo) {
-      auditoria.push("Usuario creado el " + hoy);
+      auditoria.push(`Usuario creado el ${hoy}`);
     } else {
-      auditoria.push("Datos editados el " + hoy);
+      auditoria.push(`Datos editados el ${hoy}`);
 
       if (usuario.rol !== formulario.rol) {
-        auditoria.push(
-          `Rol cambiado de ${usuario.rol} a ${formulario.rol} el ${hoy}`,
-        );
+        auditoria.push(`Rol cambiado de ${usuario.rol} a ${formulario.rol} el ${hoy}`);
       }
 
       if (usuario.estado !== formulario.estado) {
@@ -178,14 +202,12 @@ function ModalUsuario({
     }
 
     const resultado: Usuario = {
-      run: esNuevo ? normalizarRun(formulario.run) : usuario.run,
+      id: usuario?.id,
+      run: esNuevo ? runNormalizado : usuario.run,
       nombre: formulario.nombre.trim(),
       apellidos: formulario.apellidos.trim(),
-      email: formulario.email.trim(),
-      fechaNacimiento:
-        formulario.fechaNacimiento === ""
-          ? undefined
-          : formulario.fechaNacimiento,
+      email,
+      fechaNacimiento: formulario.fechaNacimiento || undefined,
       region: formulario.region,
       comuna: formulario.comuna,
       direccion: formulario.direccion.trim(),
@@ -194,7 +216,11 @@ function ModalUsuario({
       auditoria,
     };
 
-    onGuardar(resultado, esNuevo);
+    onGuardar(
+      resultado,
+      esNuevo,
+      formulario.rol !== "Cliente" ? formulario.claveInicial.trim() || undefined : undefined,
+    );
   };
 
   const comunasDisponibles = regionesComunas[formulario.region] ?? [];
@@ -205,89 +231,63 @@ function ModalUsuario({
       onCerrar={onCerrar}
       pie={
         <>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={onCerrar}
-          >
+          <button type="button" className="btn btn-secondary" onClick={onCerrar}>
             Cancelar
           </button>
-
           <button type="button" className="btn btn-primary" onClick={guardar}>
             Guardar
           </button>
         </>
       }
     >
+      {esNuevo && (
+        <div className="alert alert-info">
+          La cuenta interna quedará activa inmediatamente. Define aquí la contraseña inicial que entregarás al usuario.
+        </div>
+      )}
+
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoFormulario
-            etiqueta="RUN"
-            tipo="text"
-            nombre="run"
-            valor={formulario.run}
-            alCambiar={(valor) => cambiar("run", valor)}
-          />
+          <CampoFormulario etiqueta="RUN (sin puntos ni guion)" tipo="text" nombre="run" valor={formulario.run} alCambiar={(valor) => cambiar("run", valor)} maximoCaracteres={9} marcador="Ejemplo: 123456785" />
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoFormulario
-            etiqueta="Fecha de nacimiento"
-            tipo="date"
-            nombre="fechaNacimiento"
-            valor={formulario.fechaNacimiento}
-            alCambiar={(valor) => cambiar("fechaNacimiento", valor)}
-          />
+          <CampoFormulario etiqueta="Fecha de nacimiento" tipo="date" nombre="fechaNacimiento" valor={formulario.fechaNacimiento} alCambiar={(valor) => cambiar("fechaNacimiento", valor)} />
         </div>
       </div>
 
       <div className="row">
         <div className="col-12 col-md-6">
-          <CampoFormulario
-            etiqueta="Nombre"
-            tipo="text"
-            nombre="nombre"
-            valor={formulario.nombre}
-            alCambiar={(valor) => cambiar("nombre", valor)}
-          />
+          <CampoFormulario etiqueta="Nombre" tipo="text" nombre="nombre" valor={formulario.nombre} alCambiar={(valor) => cambiar("nombre", valor)} maximoCaracteres={50} />
         </div>
 
         <div className="col-12 col-md-6">
-          <CampoFormulario
-            etiqueta="Apellidos"
-            tipo="text"
-            nombre="apellidos"
-            valor={formulario.apellidos}
-            alCambiar={(valor) => cambiar("apellidos", valor)}
-          />
+          <CampoFormulario etiqueta="Apellidos" tipo="text" nombre="apellidos" valor={formulario.apellidos} alCambiar={(valor) => cambiar("apellidos", valor)} maximoCaracteres={100} />
         </div>
       </div>
 
-      <CampoFormulario
-        etiqueta="Correo electrónico"
-        tipo="email"
-        nombre="email"
-        valor={formulario.email}
-        alCambiar={(valor) => cambiar("email", valor)}
-      />
+      <CampoFormulario etiqueta="Correo electrónico" tipo="email" nombre="email" valor={formulario.email} alCambiar={(valor) => cambiar("email", valor)} maximoCaracteres={100} />
+
+      {formulario.rol !== "Cliente" && (
+        <CampoFormulario
+          etiqueta={esNuevo ? "Contraseña inicial (4 a 10 caracteres)" : "Nueva contraseña (opcional, 4 a 10 caracteres)"}
+          tipo="password"
+          nombre="claveInicial"
+          valor={formulario.claveInicial}
+          alCambiar={(valor) => cambiar("claveInicial", valor)}
+          longitudMinima={4}
+          maximoCaracteres={10}
+        />
+      )}
 
       <div className="row">
         <div className="col-12 col-md-6">
           <div className="mb-3">
-            <label htmlFor="usuarioRegion" className="form-label fw-semibold">
-              Región
-            </label>
-            <select
-              id="usuarioRegion"
-              className="form-select"
-              value={formulario.region}
-              onChange={(e) => cambiarRegion(e.target.value)}
-            >
+            <label htmlFor="usuarioRegion" className="form-label fw-semibold">Región</label>
+            <select id="usuarioRegion" className="form-select" value={formulario.region} onChange={(event) => cambiarRegion(event.target.value)}>
               <option value="">Selecciona una región</option>
               {Object.keys(regionesComunas).map((region) => (
-                <option key={region} value={region}>
-                  {region}
-                </option>
+                <option key={region} value={region}>{region}</option>
               ))}
             </select>
           </div>
@@ -295,87 +295,42 @@ function ModalUsuario({
 
         <div className="col-12 col-md-6">
           <div className="mb-3">
-            <label htmlFor="usuarioComuna" className="form-label fw-semibold">
-              Comuna
-            </label>
-            <select
-              id="usuarioComuna"
-              className="form-select"
-              value={formulario.comuna}
-              disabled={formulario.region === ""}
-              onChange={(e) => cambiar("comuna", e.target.value)}
-            >
-              <option value="">
-                {formulario.region === ""
-                  ? "Primero selecciona una región"
-                  : "Selecciona una comuna"}
-              </option>
+            <label htmlFor="usuarioComuna" className="form-label fw-semibold">Comuna</label>
+            <select id="usuarioComuna" className="form-select" value={formulario.comuna} disabled={!formulario.region} onChange={(event) => cambiar("comuna", event.target.value)}>
+              <option value="">{formulario.region ? "Selecciona una comuna" : "Primero selecciona una región"}</option>
               {comunasDisponibles.map((comuna) => (
-                <option key={comuna} value={comuna}>
-                  {comuna}
-                </option>
+                <option key={comuna} value={comuna}>{comuna}</option>
               ))}
             </select>
           </div>
         </div>
       </div>
 
-      <CampoFormulario
-        etiqueta="Dirección"
-        tipo="text"
-        nombre="direccion"
-        valor={formulario.direccion}
-        alCambiar={(valor) => cambiar("direccion", valor)}
-      />
+      <CampoFormulario etiqueta="Dirección" tipo="text" nombre="direccion" valor={formulario.direccion} alCambiar={(valor) => cambiar("direccion", valor)} />
 
       <div className="row">
-        <div className="col-12 col-md-4">
+        <div className="col-12 col-md-6">
           <div className="mb-3">
-            <label htmlFor="usuarioRol" className="form-label fw-semibold">
-              Rol
-            </label>
-            <select
-              id="usuarioRol"
-              className="form-select"
-              value={formulario.rol}
-              disabled={esCuentaPropia}
-              onChange={(e) => cambiar("rol", e.target.value as Usuario["rol"])}
-            >
+            <label htmlFor="usuarioRol" className="form-label fw-semibold">Rol</label>
+            <select id="usuarioRol" className="form-select" value={formulario.rol} disabled={esCuentaPropia} onChange={(event) => cambiar("rol", event.target.value as Usuario["rol"])}>
               <option value="Administrador">Administrador</option>
               <option value="Vendedor">Vendedor</option>
-              <option value="Cliente">Cliente</option>
+              {!esNuevo && <option value="Cliente">Cliente</option>}
             </select>
-            {esCuentaPropia && (
-              <div className="form-text">No puedes cambiar tu propio rol.</div>
-            )}
+            {esCuentaPropia && <div className="form-text">No puedes cambiar tu propio rol.</div>}
           </div>
         </div>
 
-        <div className="col-12 col-md-4">
+        <div className="col-12 col-md-6">
           <div className="mb-3">
-            <label htmlFor="usuarioEstado" className="form-label fw-semibold">
-              Estado
-            </label>
-            <select
-              id="usuarioEstado"
-              className="form-select"
-              value={formulario.estado}
-              disabled={esCuentaPropia}
-              onChange={(e) =>
-                cambiar("estado", e.target.value as Usuario["estado"])
-              }
-            >
+            <label htmlFor="usuarioEstado" className="form-label fw-semibold">Estado</label>
+            <select id="usuarioEstado" className="form-select" value={formulario.estado} disabled={esNuevo || esCuentaPropia} onChange={(event) => cambiar("estado", event.target.value as Usuario["estado"])}>
               <option value="Activo">Activo</option>
               <option value="Inactivo">Inactivo</option>
             </select>
-            {esCuentaPropia && (
-              <div className="form-text">
-                No puedes desactivar tu propia cuenta.
-              </div>
-            )}
+            {esCuentaPropia && <div className="form-text">No puedes desactivar tu propia cuenta.</div>}
           </div>
         </div>
-
       </div>
     </ModalBase>
   );

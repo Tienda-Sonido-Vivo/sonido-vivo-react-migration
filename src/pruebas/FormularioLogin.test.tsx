@@ -1,82 +1,47 @@
 // @vitest-environment jsdom
 
 import { test, expect, vi, afterEach } from "vitest";
-
-import {
-  render,
-  screen,
-  fireEvent,
-  cleanup,
-} from "@testing-library/react";
-
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-
 import "@testing-library/jest-dom/vitest";
 
 import FormularioLogin from "../componentes/organismos/FormularioLogin";
-
-import type { Usuario } from "../interfaces/Usuario";
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
 });
 
-test("FormularioLogin muestra un mensaje de error cuando el correo es inválido", () => {
-  const usuarios: Usuario[] = [
-    {
-      run: "123456789",
-      nombre: "Juan",
-      apellidos: "Pérez Gómez",
-      email: "admin@demo.cl",
-      fechaNacimiento: "1985-03-12",
-      region: "Metropolitana de Santiago",
-      comuna: "Santiago",
-      direccion: "Calle Falsa 123",
-      rol: "Administrador",
-      estado: "Activo",
-      clave: "1234",
-    },
-  ];
-
-  const onIniciarSesion = vi.fn();
+test("FormularioLogin muestra un error cuando el correo tiene un formato inválido", () => {
+  const onIniciarSesion = vi.fn().mockResolvedValue({
+    run: "556677889",
+    nombre: "Ana",
+    apellidos: "Martínez Díaz",
+    email: "usuario@demo.cl",
+    region: "Metropolitana de Santiago",
+    comuna: "Ñuñoa",
+    direccion: "Avenida Siempre Viva 123",
+    rol: "Cliente" as const,
+    estado: "Activo" as const,
+  });
 
   vi.spyOn(window, "alert").mockImplementation(() => {});
 
   const { container } = render(
     <MemoryRouter>
-      <FormularioLogin
-        usuarios={usuarios}
-        onIniciarSesion={onIniciarSesion}
-      />
-    </MemoryRouter>
+      <FormularioLogin onIniciarSesion={onIniciarSesion} />
+    </MemoryRouter>,
   );
 
-  const campoCorreo = container.querySelector(
-    'input[name="correo"]'
-  ) as HTMLInputElement;
+  const campoCorreo = container.querySelector('input[name="correo"]') as HTMLInputElement;
+  const campoClave = container.querySelector('input[name="clave"]') as HTMLInputElement;
 
-  const campoClave = container.querySelector(
-    'input[name="clave"]'
-  ) as HTMLInputElement;
-
-  fireEvent.change(campoCorreo, {
-    target: { value: "correo-invalido" },
-  });
-
-  fireEvent.change(campoClave, {
-    target: { value: "1234" },
-  });
-
-  fireEvent.click(
-    screen.getByRole("button", {
-      name: "Ingresar",
-    })
-  );
+  fireEvent.change(campoCorreo, { target: { value: "correo-invalido" } });
+  fireEvent.change(campoClave, { target: { value: "ClaveSegura123" } });
+  fireEvent.click(screen.getByRole("button", { name: "Ingresar" }));
 
   expect(window.alert).toHaveBeenCalledWith(
-    "Ingrese un correo válido."
+    "El correo no tiene un formato válido. Ejemplo: nombre@correo.cl",
   );
-
   expect(onIniciarSesion).not.toHaveBeenCalled();
 });
