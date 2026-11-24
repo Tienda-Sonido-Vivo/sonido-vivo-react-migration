@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 import type { Producto } from "../interfaces/Producto";
 import { apiRequest } from "./api";

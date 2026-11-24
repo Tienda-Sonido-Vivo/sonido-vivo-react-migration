@@ -1,6 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
-
-
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
 
 export class ApiError extends Error {

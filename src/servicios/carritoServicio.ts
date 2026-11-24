@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 import type { ItemCarrito } from "../interfaces/ItemCarrito";
 import { apiRequest } from "./api";

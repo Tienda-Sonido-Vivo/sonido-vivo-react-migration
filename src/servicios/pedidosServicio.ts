@@ -1,4 +1,3 @@
-// Archivo ya modificado/agregado para preparar la integración. No modificar
 
 import type { Pedido } from "../interfaces/Pedido";
 import type { EstadoPedido } from "../interfaces/EstadoPedido";
